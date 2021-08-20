@@ -6,9 +6,11 @@ namespace Extension\ComponentInspector;
 
 use Nette\Application\UI\TemplateFactory;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Tracy\Bar;
 use Tracy\Debugger;
 
 class ComponentInspectorExtension extends CompilerExtension
@@ -52,9 +54,7 @@ class ComponentInspectorExtension extends CompilerExtension
             $this->getInitialization()->addBody(
                 '$this->getService(?)->addPanel($this->getService(?));',
                 [
-                    // @todo
-                    // Reference::fromType(Bar::class)->getValue(),
-                    'tracy.bar',
+                    $builder->getByType(Bar::class),
                     $tracyPanel->getName(),
                 ],
             );
