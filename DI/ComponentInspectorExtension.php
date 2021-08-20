@@ -2,13 +2,16 @@
 
 namespace Extension\ComponentInspector\DI;
 
-use Extension\ComponentInspector\InspectorTemplateFactory;
+use Extension\ComponentInspector\InspectorEngine;
 use Extension\ComponentInspector\Tracy\InspectorPanel;
-use Nette\Bridges\ApplicationLatte\TemplateFactory;
+use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\FactoryDefinition;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Tracy\Bar;
+use function assert;
 
 final class ComponentInspectorExtension extends CompilerExtension
 {
@@ -20,34 +23,23 @@ final class ComponentInspectorExtension extends CompilerExtension
 		]);
 	}
 
-	public function loadConfiguration(): void
-	{
-		parent::loadConfiguration();
-
-		if (!$this->config->enabled) {
-			return;
-		}
-
-		$builder = $this->getContainerBuilder();
-
-		$factoryDefinition = $builder->getDefinitionByType(TemplateFactory::class);
-		$factoryDefinition->setAutowired(false);
-
-		$builder->addDefinition($this->prefix('templateFactory'))
-			->setFactory(InspectorTemplateFactory::class, [
-				$factoryDefinition,
-			]);
-	}
-
 	public function beforeCompile(): void
 	{
 		parent::beforeCompile();
 
-		if (!$this->config->enabled) {
+		$builder = $this->getContainerBuilder();
+		$config = $this->config;
+
+		if (!$config->enabled) {
 			return;
 		}
 
-		$builder = $this->getContainerBuilder();
+		$latteFactoryDefinition = $builder->getDefinitionByType(LatteFactory::class);
+		assert($latteFactoryDefinition instanceof FactoryDefinition);
+
+		$latteDefinition = $latteFactoryDefinition->getResultDefinition();
+		assert($latteDefinition instanceof ServiceDefinition);
+		$latteDefinition->setFactory(InspectorEngine::class);
 
 		$tracyPanel = $builder->addDefinition($this->prefix('tracy.panel'))
 			->setFactory(InspectorPanel::class)
