@@ -53,9 +53,7 @@ class InspectTemplate extends Template
 
     public function render(string $file = null, array $params = []): void
     {
-        // $f = $file ?: $this->getFile();
-
-        $controlTreeInfo = $this->getControlTreeInfo($this->control);
+        $controlTreeInfo = $this->getControlTreeInfo($this->control, $file ?: $this->getFile());
         $data = json_encode($controlTreeInfo);
 
         $name = implode($this->control::NAME_SEPARATOR, array_map(function ($item) {
@@ -67,7 +65,7 @@ class InspectTemplate extends Template
         echo "<!-- {/control} -->";
     }
 
-    private function getControlTreeInfo(Control $control): array
+    private function getControlTreeInfo(Control $control, ?string $file): array
     {
         $treeInfo = [];
         $lastRenderable = [];
@@ -79,8 +77,8 @@ class InspectTemplate extends Template
                 if ($control instanceof Renderable) {
                     $reflection = new \ReflectionClass($control);
                     $lastRenderable = [
-                        'templateFile' => Helpers::editorUri($control->template->getFile()),
-                        'templateFileName' => basename($control->template->getFile()),
+                        'templateFile' => $file !== null ? Helpers::editorUri($file) : '',
+                        'templateFileName' => $file !== null ? basename($file) : '',
                         'file' => Helpers::editorUri($reflection->getFileName()),
                         'className' => $reflection->getName(),
                     ];
