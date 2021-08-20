@@ -1,30 +1,29 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Extension\ComponentInspector\Tracy;
 
 use Latte\Engine;
+use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Tracy\IBarPanel;
 
-class InspectPanel implements IBarPanel
+final class InspectPanel implements IBarPanel
 {
-    private Engine $latte;
 
-    public function __construct(/*Engine $latte*/)
-    {
-        // @todo mozna jde ziskat nejak pres DI
-        //$this->latte = $latte;
-        $this->latte = new Engine();
-    }
+	private Engine $engine;
 
-    public function getTab()
-    {
-        return $this->latte->renderToString(__DIR__ . '/InspectPanel.tab.latte');
+	public function __construct(LatteFactory $latteFactory)
+	{
+		$this->engine = $latteFactory->create();
 	}
 
-    public function getPanel()
-    {
-        return $this->latte->renderToString(__DIR__ . '/InspectPanel.panel.latte');
+	public function getTab(): string
+	{
+		return $this->engine->renderToString(__DIR__ . '/InspectPanel.tab.latte');
 	}
+
+	public function getPanel(): string
+	{
+		return $this->engine->renderToString(__DIR__ . '/InspectPanel.panel.latte');
+	}
+
 }
