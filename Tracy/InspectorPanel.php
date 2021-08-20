@@ -23,7 +23,11 @@ final class InspectorPanel implements IBarPanel
 
 	public function getPanel(): string
 	{
-		return $this->engine->renderToString(__DIR__ . '/Inspector.panel.latte');
+		$scriptCode = \file_get_contents(__DIR__ . '/inspector.js');
+
+		return $this->engine->renderToString(__DIR__ . '/Inspector.panel.latte', [
+			'scriptCode' => $scriptCode,
+		]);
 	}
 
 }
