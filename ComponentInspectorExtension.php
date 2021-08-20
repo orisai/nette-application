@@ -8,15 +8,12 @@ use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Tracy\Bar;
-use Tracy\Debugger;
 
 final class ComponentInspectorExtension extends CompilerExtension
 {
 
 	public function getConfigSchema(): Schema
 	{
-		Debugger::getBar()->addPanel(new InspectPanel());
-
 		return Expect::structure([
 			'enabled' => Expect::bool(false),
 		]);
