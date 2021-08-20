@@ -13,7 +13,7 @@ use OriNette\Application\Inspector\Tracy\InspectorPanel;
 use Tracy\Bar;
 use function assert;
 
-final class ComponentInspectorExtension extends CompilerExtension
+final class InspectorExtension extends CompilerExtension
 {
 
 	public function getConfigSchema(): Schema
