@@ -4,9 +4,8 @@ namespace Extension\ComponentInspector\DI;
 
 use Extension\ComponentInspector\Tracy\InspectPanel;
 use Extension\ComponentInspector\InspectTemplateFactory;
-use Nette\Application\UI\TemplateFactory;
+use Nette\Bridges\ApplicationLatte\TemplateFactory;
 use Nette\DI\CompilerExtension;
-use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Tracy\Bar;
@@ -31,16 +30,13 @@ final class ComponentInspectorExtension extends CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 
-		$factoryName = $builder->getByType(TemplateFactory::class);
-		$factory = $builder->getDefinition($factoryName);
-		$factory->setAutowired(false);
+		$factoryDefinition = $builder->getDefinitionByType(TemplateFactory::class);
+		$factoryDefinition->setAutowired(false);
 
-		$definition = new ServiceDefinition();
-		$definition
-			->setFactory(InspectTemplateFactory::class)
-			->addSetup('setOriginalFactory', [$factoryName]);
-
-		$builder->addDefinition($this->prefix('templateFactory'), $definition);
+		$builder->addDefinition($this->prefix('templateFactory'))
+			->setFactory(InspectTemplateFactory::class, [
+				$factoryDefinition
+			]);
 	}
 
 	public function beforeCompile(): void

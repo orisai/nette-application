@@ -1,32 +1,25 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Extension\ComponentInspector;
 
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Template;
 use Nette\Application\UI\TemplateFactory;
-use Nette\DI\Container;
+use Nette\Bridges\ApplicationLatte\Template as LatteTemplate;
+use Nette\Bridges\ApplicationLatte\TemplateFactory as LatteTemplateFactory;
 
-class InspectTemplateFactory implements TemplateFactory
+final class InspectTemplateFactory implements TemplateFactory
 {
-    public TemplateFactory $originalFactory;
 
-    public Container $container;
+	private LatteTemplateFactory $templateFactory;
 
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
+	public function __construct(LatteTemplateFactory $templateFactory)
+	{
+		$this->templateFactory = $templateFactory;
+	}
 
-    public function setOriginalFactory(string $factoryName): void
-    {
-        /** @var TemplateFactory $service */
-        $service = $this->container->getService($factoryName);
-        $this->originalFactory = $service;
-    }
+	public function createTemplate(Control $control = null): LatteTemplate
+	{
+		return $this->templateFactory->createTemplate($control, InspectTemplate::class);
+	}
 
-    function createTemplate(Control $control = null): Template
-    {
-        return $this->originalFactory->createTemplate($control, InspectTemplate::class);
-    }
 }
