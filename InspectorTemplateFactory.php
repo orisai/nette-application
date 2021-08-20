@@ -7,7 +7,7 @@ use Nette\Application\UI\TemplateFactory;
 use Nette\Bridges\ApplicationLatte\Template as LatteTemplate;
 use Nette\Bridges\ApplicationLatte\TemplateFactory as LatteTemplateFactory;
 
-final class InspectTemplateFactory implements TemplateFactory
+final class InspectorTemplateFactory implements TemplateFactory
 {
 
 	private LatteTemplateFactory $templateFactory;
@@ -19,7 +19,7 @@ final class InspectTemplateFactory implements TemplateFactory
 
 	public function createTemplate(Control $control = null): LatteTemplate
 	{
-		return $this->templateFactory->createTemplate($control, InspectTemplate::class);
+		return $this->templateFactory->createTemplate($control, InspectorTemplate::class);
 	}
 
 }

@@ -6,7 +6,7 @@ use Latte\Engine;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Tracy\IBarPanel;
 
-final class InspectPanel implements IBarPanel
+final class InspectorPanel implements IBarPanel
 {
 
 	private Engine $engine;
@@ -18,12 +18,12 @@ final class InspectPanel implements IBarPanel
 
 	public function getTab(): string
 	{
-		return $this->engine->renderToString(__DIR__ . '/InspectPanel.tab.latte');
+		return $this->engine->renderToString(__DIR__ . '/Inspector.tab.latte');
 	}
 
 	public function getPanel(): string
 	{
-		return $this->engine->renderToString(__DIR__ . '/InspectPanel.panel.latte');
+		return $this->engine->renderToString(__DIR__ . '/Inspector.panel.latte');
 	}
 
 }

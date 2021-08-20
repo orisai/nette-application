@@ -2,8 +2,8 @@
 
 namespace Extension\ComponentInspector\DI;
 
-use Extension\ComponentInspector\Tracy\InspectPanel;
-use Extension\ComponentInspector\InspectTemplateFactory;
+use Extension\ComponentInspector\Tracy\InspectorPanel;
+use Extension\ComponentInspector\InspectorTemplateFactory;
 use Nette\Bridges\ApplicationLatte\TemplateFactory;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
@@ -34,7 +34,7 @@ final class ComponentInspectorExtension extends CompilerExtension
 		$factoryDefinition->setAutowired(false);
 
 		$builder->addDefinition($this->prefix('templateFactory'))
-			->setFactory(InspectTemplateFactory::class, [
+			->setFactory(InspectorTemplateFactory::class, [
 				$factoryDefinition
 			]);
 	}
@@ -50,7 +50,7 @@ final class ComponentInspectorExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$tracyPanel = $builder->addDefinition($this->prefix('tracy.panel'))
-			->setFactory(InspectPanel::class)
+			->setFactory(InspectorPanel::class)
 			->setAutowired(false);
 
 		$this->getInitialization()->addBody(

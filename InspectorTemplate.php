@@ -13,7 +13,7 @@ use Nette\Security\User;
 use Nette\Utils\Arrays;
 use Tracy\Helpers;
 
-class InspectTemplate extends Template
+class InspectorTemplate extends Template
 {
     public Presenter $presenter;
 
@@ -33,7 +33,7 @@ class InspectTemplate extends Template
      * Adds new template parameter.
      * @return static
      */
-    public function add(string $name, $value): InspectTemplate
+    public function add(string $name, $value): InspectorTemplate
     {
         if (property_exists($this, $name)) {
             throw new InvalidStateException("The variable '$name' already exists.");
