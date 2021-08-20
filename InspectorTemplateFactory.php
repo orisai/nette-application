@@ -17,7 +17,7 @@ final class InspectorTemplateFactory implements TemplateFactory
 		$this->templateFactory = $templateFactory;
 	}
 
-	public function createTemplate(Control $control = null): LatteTemplate
+	public function createTemplate(?Control $control = null): LatteTemplate
 	{
 		return $this->templateFactory->createTemplate($control, InspectorTemplate::class);
 	}

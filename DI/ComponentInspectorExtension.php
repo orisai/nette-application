@@ -2,8 +2,8 @@
 
 namespace Extension\ComponentInspector\DI;
 
-use Extension\ComponentInspector\Tracy\InspectorPanel;
 use Extension\ComponentInspector\InspectorTemplateFactory;
+use Extension\ComponentInspector\Tracy\InspectorPanel;
 use Nette\Bridges\ApplicationLatte\TemplateFactory;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
@@ -35,7 +35,7 @@ final class ComponentInspectorExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('templateFactory'))
 			->setFactory(InspectorTemplateFactory::class, [
-				$factoryDefinition
+				$factoryDefinition,
 			]);
 	}
 
