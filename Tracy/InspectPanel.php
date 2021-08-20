@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Extension\ComponentInspector;
+namespace Extension\ComponentInspector\Tracy;
 
 use Latte\Engine;
 use Tracy\IBarPanel;

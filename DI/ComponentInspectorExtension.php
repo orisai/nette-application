@@ -1,7 +1,9 @@
 <?php declare(strict_types = 1);
 
-namespace Extension\ComponentInspector;
+namespace Extension\ComponentInspector\DI;
 
+use Extension\ComponentInspector\Tracy\InspectPanel;
+use Extension\ComponentInspector\InspectTemplateFactory;
 use Nette\Application\UI\TemplateFactory;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
