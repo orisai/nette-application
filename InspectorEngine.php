@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Extension\ComponentInspector;
+namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
 use Nette\Application\UI\Control;

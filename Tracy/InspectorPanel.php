@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Extension\ComponentInspector\Tracy;
+namespace OriNette\Application\Inspector\Tracy;
 
 use Latte\Engine;
 use Nette\Bridges\ApplicationLatte\LatteFactory;

@@ -1,15 +1,15 @@
 <?php declare(strict_types = 1);
 
-namespace Extension\ComponentInspector\DI;
+namespace OriNette\Application\Inspector\DI;
 
-use Extension\ComponentInspector\InspectorEngine;
-use Extension\ComponentInspector\Tracy\InspectorPanel;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use OriNette\Application\Inspector\InspectorEngine;
+use OriNette\Application\Inspector\Tracy\InspectorPanel;
 use Tracy\Bar;
 use function assert;
 
