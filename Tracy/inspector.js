@@ -1,15 +1,43 @@
-const switchButton = document.getElementById("switch")
+const switchButton = document.getElementById("switch-button")
+const livePreviewButton = document.getElementById("live-preview-button")
+const threeDimensionalModeButton = document.getElementById("three-dimensional-mode-button")
+
 const targetContainer = document.getElementById("target")
 let isActive = false
 let highlightingElement = null
+let isLivePreview = false
+let is3DMode = false
 
 switchButton.addEventListener("click", () => {
     toggleState()
 })
 
+livePreviewButton.addEventListener("click", () => {
+	isLivePreview = !isLivePreview
+	livePreviewButton.classList.toggle("is-on", isLivePreview)
+})
+
+threeDimensionalModeButton.addEventListener("click", () => {
+	is3DMode = !is3DMode
+	document.documentElement.classList.toggle("tracy-InspectorPanel-3DMode", is3DMode)
+	threeDimensionalModeButton.classList.toggle("is-active", is3DMode)
+
+	if (!is3DMode) {
+		document.body.style.transform = "";
+	}
+
+	document.documentElement.addEventListener("mousemove", (event) => {
+		if (event.ctrlKey) {
+			let rotate_X = event.pageX;
+			let rotate_Y = event.pageY;
+			document.body.style.transform = `rotateX(${rotate_Y}deg) rotateY(${rotate_X}deg)`
+		}
+	})
+})
+
 function toggleState() {
     isActive = !isActive
-    switchButton.innerText = isActive ? "Vypnout" : "Zapnout"
+	switchButton.classList.toggle("is-active", isActive)
 
     if (isActive) {
         addEvents()
@@ -31,10 +59,10 @@ function displayInfo(componentInfo) {
     divComponentName.textContent = componentInfo.name
 
     let html = `
-            <h2>${componentInfo.name}</h2>
+            <h2 class="tracy-ComponentInspector-componentName">${componentInfo.name}</h2>
         `
 
-    if (componentInfo.treeInfo.length > 0) {
+    if (componentInfo.tree.length > 0) {
         html += `
                 <table>
                     <thead>
@@ -46,7 +74,7 @@ function displayInfo(componentInfo) {
                     </thead>
             `
 
-        componentInfo.treeInfo.forEach(info => {
+        componentInfo.tree.forEach(info => {
             html += `
                     <tr>
                         <td>${info.name}</td>
@@ -67,24 +95,37 @@ function displayInfo(componentInfo) {
         html += '</table>';
     }
 
+    if (componentInfo.renderTime) {
+    	html += `
+			<p class="tracy-ComponentInspector-renderTime">Render time: ${componentInfo.renderTime} seconds</p>
+    	`
+	}
+
     targetContainer.innerHTML = ""
     targetContainer.appendChild(divComponentName)
     targetContainer.innerHTML = html
 }
 
-function handleDocumentMouseMove(event) {
-    const componentInfo = getComponentInfo(event.target)
+function handleDocumentMouseMove (event) {
+	const componentInfo = getComponentInfo(event.target)
 
-    if (componentInfo /* !== null */) {
-        displayInfo(componentInfo)
-        highlightElement(componentInfo.componentElement, componentInfo.name)
-    }
+	if (componentInfo /* !== null */) {
+		if (isLivePreview) {
+			displayInfo(componentInfo)
+		}
+		highlightElement(componentInfo.componentElement, componentInfo.name)
+	}
 }
 
 function handleDocumentClick(event) {
     toggleState()
     event.preventDefault()
     event.stopImmediatePropagation()
+
+	const componentInfo = getComponentInfo(event.target)
+	if (componentInfo) {
+		displayInfo(componentInfo)
+	}
 }
 
 function handleDocumentKeydown(event) {
@@ -162,13 +203,15 @@ function getComponentInfo(element)
 
     const splitted = commentNode.textContent.trim().split(" ")
     const name = splitted[1]
-    const treeInfo = splitted[2] ? JSON.parse(splitted[2].slice(0, -1)) : []
+	const data = JSON.parse(splitted[2].slice(0, -1))
+    const tree = data.tree || []
 
     return {
         componentElement: componentElement,
         hoverElement: element,
         name: name,
-        treeInfo: treeInfo,
+		tree: tree,
+		renderTime: data.renderTime,
     }
 }
 
@@ -210,3 +253,40 @@ function highlightElement(element, name) {
     highlightingElement.style.width = domRect.width + "px"
     highlightingElement.style.height = domRect.height + "px"
 }
+
+
+/*********************************************************** */
+
+document.getElementById("filter-query").addEventListener("input", (event) => {
+	const styleFiltering = document.getElementById("style-filtering")
+	if (event.target.value) {
+		// @todo css selektor
+		styleFiltering.innerHTML = `
+			#tree td:not([data-name*='${event.target.value}']) {
+				opacity: 0.5 !important;
+			}
+		`
+	} else {
+		styleFiltering.innerHTML = ""
+	}
+})
+
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+	let timeout;
+	return function() {
+		let context = this, args = arguments;
+		let later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		let callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
