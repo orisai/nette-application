@@ -32,12 +32,7 @@ final class InspectorEngine extends Engine
 			$output = Helpers::capture(fn () => parent::render($name, $params, $block));
 			$renderTime = Debugger::timer();
 
-			echo $this->wrapOutput(
-				$output,
-				$control,
-				$name,
-				$renderTime
-			);
+			echo $this->wrapOutput($output, $control, $name, $renderTime);
 
 			return;
 		}
@@ -55,12 +50,8 @@ final class InspectorEngine extends Engine
 			Debugger::timer();
 			$output = parent::renderToString($name, $params, $block);
 			$renderTime = Debugger::timer();
-			return $this->wrapOutput(
-				$output,
-				$control,
-				$name,
-				$renderTime
-			);
+
+			return $this->wrapOutput($output, $control, $name, $renderTime);
 		}
 
 		return parent::renderToString($name, $params, $block);

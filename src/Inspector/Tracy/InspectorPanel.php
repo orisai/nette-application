@@ -10,6 +10,7 @@ use Nette\Application\UI\Presenter;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Tracy\IBarPanel;
 use function assert;
+use function file_get_contents;
 
 final class InspectorPanel implements IBarPanel
 {
@@ -18,9 +19,7 @@ final class InspectorPanel implements IBarPanel
 
 	private Engine $engine;
 
-	/**
-	 * @var array<string, mixed>
-	 */
+	/** @var array<string, mixed> */
 	private array $componentTree;
 
 	public function __construct(Application $application, LatteFactory $latteFactory)
@@ -36,7 +35,7 @@ final class InspectorPanel implements IBarPanel
 
 	public function getPanel(): string
 	{
-		$scriptCode = \file_get_contents(__DIR__ . '/inspector.js');
+		$scriptCode = file_get_contents(__DIR__ . '/inspector.js');
 
 		$this->componentTree = [];
 		if (($presenter = $this->application->getPresenter()) !== null) {
@@ -52,7 +51,6 @@ final class InspectorPanel implements IBarPanel
 
 	/**
 	 * @param Presenter|Control|Multiplier $control
-	 * @param int $depth
 	 */
 	private function buildComponentTree($control, int $depth = 0): void
 	{
@@ -62,7 +60,7 @@ final class InspectorPanel implements IBarPanel
 			'isMultiplier' => $control instanceof Multiplier,
 		];
 
-		/** @var Control[] $components */
+		/** @var array<Control> $components */
 		$components = $control->getComponents();
 
 		foreach ($components as $component) {
