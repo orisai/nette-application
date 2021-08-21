@@ -7,6 +7,7 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Renderable;
 use ReflectionClass;
+use Tracy\Debugger;
 use Tracy\Helpers;
 use function array_map;
 use function array_unshift;
@@ -27,10 +28,15 @@ final class InspectorEngine extends Engine
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
 		if ($control instanceof Control) {
+			Debugger::timer();
+			$output = Helpers::capture(fn () => parent::render($name, $params, $block));
+			$renderTime = Debugger::timer();
+
 			echo $this->wrapOutput(
-				Helpers::capture(fn () => parent::render($name, $params, $block)),
+				$output,
 				$control,
 				$name,
+				$renderTime
 			);
 
 			return;
@@ -46,20 +52,27 @@ final class InspectorEngine extends Engine
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
 		if ($control instanceof Control) {
+			Debugger::timer();
+			$output = parent::renderToString($name, $params, $block);
+			$renderTime = Debugger::timer();
 			return $this->wrapOutput(
-				parent::renderToString($name, $params, $block),
+				$output,
 				$control,
 				$name,
+				$renderTime
 			);
 		}
 
 		return parent::renderToString($name, $params, $block);
 	}
 
-	private function wrapOutput(string $output, Control $control, string $file): string
+	private function wrapOutput(string $output, Control $control, string $file, float $renderTime): string
 	{
 		$controlTreeInfo = $this->getControlTreeInfo($control, $file);
-		$data = json_encode($controlTreeInfo, JSON_THROW_ON_ERROR);
+		$data = json_encode([
+			'tree' => $controlTreeInfo,
+			'renderTime' => $renderTime,
+		], JSON_THROW_ON_ERROR);
 
 		$name = implode(
 			$control::NAME_SEPARATOR,
