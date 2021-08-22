@@ -1,0 +1,7 @@
+extensions:
+	application: Nette\Bridges\ApplicationDI\ApplicationExtension(%debugMode%)
+	http: Nette\Bridges\HttpDI\HttpExtension
+	latte: Nette\Bridges\ApplicationDI\LatteExtension(%tempDir%/latte, %debugMode%)
+	routing: Nette\Bridges\ApplicationDI\RoutingExtension(%debugMode%)
+	tracy: Tracy\Bridges\Nette\TracyExtension(%debugMode%, %consoleMode%)
+	uiInspector: OriNette\Application\Inspector\DI\InspectorExtension

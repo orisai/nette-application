@@ -51,6 +51,7 @@ final class InspectorExtension extends CompilerExtension
 		$applicationDefinition->addSetup(
 			[self::class, 'setupPanel'],
 			[
+				"$this->name.panel",
 				$builder->getDefinitionByType(Bar::class),
 				$applicationDefinition,
 				$latteFactoryDefinition,
@@ -58,10 +59,16 @@ final class InspectorExtension extends CompilerExtension
 		);
 	}
 
-	public static function setupPanel(Bar $bar, Application $application, LatteFactory $latteFactory): void
+	public static function setupPanel(
+		string $name,
+		Bar $bar,
+		Application $application,
+		LatteFactory $latteFactory
+	): void
 	{
 		$bar->addPanel(
 			new InspectorPanel($application, $latteFactory),
+			$name,
 		);
 	}
 
