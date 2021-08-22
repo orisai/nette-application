@@ -11,9 +11,11 @@ use Tracy\Debugger;
 use Tracy\Helpers;
 use function array_map;
 use function array_unshift;
+use function assert;
 use function basename;
 use function file_exists;
 use function implode;
+use function is_string;
 use function json_encode;
 use const JSON_THROW_ON_ERROR;
 use const PHP_EOL;
@@ -94,10 +96,13 @@ final class InspectorEngine extends Engine
 
 				if ($control instanceof Renderable) {
 					$reflection = new ReflectionClass($control);
+					$fileName = $reflection->getFileName();
+					assert(is_string($fileName));
+
 					$lastRenderable = [
 						'templateFile' => $templateFile,
 						'templateFileName' => $templateFileName,
-						'file' => Helpers::editorUri($reflection->getFileName()),
+						'file' => Helpers::editorUri($fileName),
 						'className' => $reflection->getName(),
 					];
 				}

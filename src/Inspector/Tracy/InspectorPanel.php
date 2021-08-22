@@ -4,12 +4,13 @@ namespace OriNette\Application\Inspector\Tracy;
 
 use Latte\Engine;
 use Nette\Application\Application;
+use Nette\Application\UI\Component;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Multiplier;
 use Nette\Application\UI\Presenter;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
+use stdClass;
 use Tracy\IBarPanel;
-use function assert;
 use function file_get_contents;
 
 final class InspectorPanel implements IBarPanel
@@ -19,7 +20,7 @@ final class InspectorPanel implements IBarPanel
 
 	private Engine $engine;
 
-	/** @var array<string, mixed> */
+	/** @var array<int, stdClass> */
 	private array $componentTree;
 
 	public function __construct(Application $application, LatteFactory $latteFactory)
@@ -30,42 +31,41 @@ final class InspectorPanel implements IBarPanel
 
 	public function getTab(): string
 	{
+		$presenter = $this->application->getPresenter();
+		if (!$presenter instanceof Presenter) {
+			return '';
+		}
+
 		return $this->engine->renderToString(__DIR__ . '/Inspector.tab.latte');
 	}
 
 	public function getPanel(): string
 	{
-		$scriptCode = file_get_contents(__DIR__ . '/inspector.js');
-
-		$this->componentTree = [];
-		if (($presenter = $this->application->getPresenter()) !== null) {
-			assert($presenter instanceof Presenter);
-			$this->buildComponentTree($presenter);
+		$presenter = $this->application->getPresenter();
+		if (!$presenter instanceof Presenter) {
+			return '';
 		}
 
+		$this->componentTree = [];
+		$this->buildComponentTree($presenter);
+
 		return $this->engine->renderToString(__DIR__ . '/Inspector.panel.latte', [
-			'scriptCode' => $scriptCode,
+			'scriptCode' => file_get_contents(__DIR__ . '/inspector.js'),
 			'componentTree' => $this->componentTree,
 		]);
 	}
 
-	/**
-	 * @param Presenter|Control|Multiplier $control
-	 */
-	private function buildComponentTree($control, int $depth = 0): void
+	private function buildComponentTree(Component $component, int $depth = 0): void
 	{
 		$this->componentTree[] = (object) [
-			'name' => $control->name,
+			'name' => $component->getName(),
 			'depth' => $depth,
-			'isMultiplier' => $control instanceof Multiplier,
+			'isMultiplier' => $component instanceof Multiplier,
 		];
 
-		/** @var array<Control> $components */
-		$components = $control->getComponents();
-
-		foreach ($components as $component) {
-			if ($component instanceof Control || $component instanceof Multiplier) {
-				$this->buildComponentTree($component, $depth + 1);
+		foreach ($component->getComponents() as $subcomponent) {
+			if ($subcomponent instanceof Control || $subcomponent instanceof Multiplier) {
+				$this->buildComponentTree($subcomponent, $depth + 1);
 			}
 		}
 	}

@@ -5,14 +5,17 @@ namespace OriNette\Application\Inspector\DI;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\FactoryDefinition;
-use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use OriNette\Application\Inspector\InspectorEngine;
 use OriNette\Application\Inspector\Tracy\InspectorPanel;
+use stdClass;
 use Tracy\Bar;
 use function assert;
 
+/**
+ * @property-read stdClass $config
+ */
 final class InspectorExtension extends CompilerExtension
 {
 
@@ -38,7 +41,6 @@ final class InspectorExtension extends CompilerExtension
 		assert($latteFactoryDefinition instanceof FactoryDefinition);
 
 		$latteDefinition = $latteFactoryDefinition->getResultDefinition();
-		assert($latteDefinition instanceof ServiceDefinition);
 		$latteDefinition->setFactory(InspectorEngine::class);
 
 		$tracyPanel = $builder->addDefinition($this->prefix('tracy.panel'))
