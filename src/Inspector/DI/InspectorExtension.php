@@ -2,9 +2,11 @@
 
 namespace OriNette\Application\Inspector\DI;
 
+use Nette\Application\Application;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\FactoryDefinition;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use OriNette\Application\Inspector\InspectorEngine;
@@ -43,16 +45,23 @@ final class InspectorExtension extends CompilerExtension
 		$latteDefinition = $latteFactoryDefinition->getResultDefinition();
 		$latteDefinition->setFactory(InspectorEngine::class);
 
-		$tracyPanel = $builder->addDefinition($this->prefix('tracy.panel'))
-			->setFactory(InspectorPanel::class)
-			->setAutowired(false);
+		$applicationDefinition = $builder->getDefinitionByType(Application::class);
+		assert($applicationDefinition instanceof ServiceDefinition);
 
-		$this->getInitialization()->addBody(
-			'$this->getService(?)->addPanel($this->getService(?));',
+		$applicationDefinition->addSetup(
+			[self::class, 'setupPanel'],
 			[
-				$builder->getByType(Bar::class),
-				$tracyPanel->getName(),
+				$builder->getDefinitionByType(Bar::class),
+				$applicationDefinition,
+				$latteFactoryDefinition,
 			],
+		);
+	}
+
+	public static function setupPanel(Bar $bar, Application $application, LatteFactory $latteFactory): void
+	{
+		$bar->addPanel(
+			new InspectorPanel($application, $latteFactory),
 		);
 	}
 
