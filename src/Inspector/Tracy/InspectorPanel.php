@@ -5,10 +5,10 @@ namespace OriNette\Application\Inspector\Tracy;
 use Latte\Engine;
 use Nette\Application\Application;
 use Nette\Application\UI\Component;
-use Nette\Application\UI\Control;
-use Nette\Application\UI\Multiplier;
 use Nette\Application\UI\Presenter;
+use Nette\Application\UI\Renderable;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
+use ReflectionClass;
 use stdClass;
 use Tracy\IBarPanel;
 use function file_get_contents;
@@ -60,13 +60,12 @@ final class InspectorPanel implements IBarPanel
 	 */
 	private function buildComponentList(array &$componentList, Component $component, int $depth = 0): void
 	{
-		if ($component instanceof Control || $component instanceof Multiplier) {
-			$componentList[] = (object) [
-				'name' => $component->getName(),
-				'depth' => $depth,
-				'isMultiplier' => $component instanceof Multiplier,
-			];
-		}
+		$componentList[] = (object) [
+			'name' => $component->getName(),
+			'depth' => $depth,
+			'isRenderable' => $component instanceof Renderable,
+			'classShortName' => (new ReflectionClass($component))->getShortName(),
+		];
 
 		$subDepth = $depth + 1;
 		foreach ($component->getComponents() as $subcomponent) {
