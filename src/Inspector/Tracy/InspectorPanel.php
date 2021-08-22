@@ -20,9 +20,6 @@ final class InspectorPanel implements IBarPanel
 
 	private Engine $engine;
 
-	/** @var array<int, stdClass> */
-	private array $componentTree;
-
 	public function __construct(Application $application, LatteFactory $latteFactory)
 	{
 		$this->application = $application;
@@ -46,18 +43,24 @@ final class InspectorPanel implements IBarPanel
 			return '';
 		}
 
-		$this->componentTree = [];
-		$this->buildComponentTree($presenter);
+		$componentList = [];
+		$this->buildComponentList($componentList, $presenter);
 
-		return $this->engine->renderToString(__DIR__ . '/Inspector.panel.latte', [
-			'scriptCode' => file_get_contents(__DIR__ . '/inspector.js'),
-			'componentTree' => $this->componentTree,
-		]);
+		return $this->engine->renderToString(
+			__DIR__ . '/Inspector.panel.latte',
+			[
+				'scriptCode' => file_get_contents(__DIR__ . '/inspector.js'),
+				'componentList' => $componentList,
+			],
+		);
 	}
 
-	private function buildComponentTree(Component $component, int $depth = 0): void
+	/**
+	 * @param array<int, stdClass> $componentList
+	 */
+	private function buildComponentList(array &$componentList, Component $component, int $depth = 0): void
 	{
-		$this->componentTree[] = (object) [
+		$componentList[] = (object) [
 			'name' => $component->getName(),
 			'depth' => $depth,
 			'isMultiplier' => $component instanceof Multiplier,
@@ -65,7 +68,7 @@ final class InspectorPanel implements IBarPanel
 
 		foreach ($component->getComponents() as $subcomponent) {
 			if ($subcomponent instanceof Control || $subcomponent instanceof Multiplier) {
-				$this->buildComponentTree($subcomponent, $depth + 1);
+				$this->buildComponentList($componentList, $subcomponent, $depth + 1);
 			}
 		}
 	}

@@ -5,7 +5,7 @@
 		<input id="filter-query" type="text" placeholder="Filter">
 
 		<table>
-			<tr n:foreach="$componentTree as $item">
+			<tr n:foreach="$componentList as $item">
 				{* @todo full name for filtering *}
 				<td data-name="{$item->name}">
 					{if $item->depth > 0}
