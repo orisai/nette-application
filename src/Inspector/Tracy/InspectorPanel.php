@@ -60,15 +60,18 @@ final class InspectorPanel implements IBarPanel
 	 */
 	private function buildComponentList(array &$componentList, Component $component, int $depth = 0): void
 	{
-		$componentList[] = (object) [
-			'name' => $component->getName(),
-			'depth' => $depth,
-			'isMultiplier' => $component instanceof Multiplier,
-		];
+		if ($component instanceof Control || $component instanceof Multiplier) {
+			$componentList[] = (object) [
+				'name' => $component->getName(),
+				'depth' => $depth,
+				'isMultiplier' => $component instanceof Multiplier,
+			];
+		}
 
+		$subDepth = $depth + 1;
 		foreach ($component->getComponents() as $subcomponent) {
-			if ($subcomponent instanceof Control || $subcomponent instanceof Multiplier) {
-				$this->buildComponentList($componentList, $subcomponent, $depth + 1);
+			if ($subcomponent instanceof Component) {
+				$this->buildComponentList($componentList, $subcomponent, $subDepth);
 			}
 		}
 	}
