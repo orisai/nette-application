@@ -1,7 +1,7 @@
 <h1 align="center">Orisai Nette Application</h1>
 
 <p align="center">
-    Extras for nette/application
+	Extras for <a href="https://github.com/nette/application/">nette/application</a>
 </p>
 
 <p align=center>
