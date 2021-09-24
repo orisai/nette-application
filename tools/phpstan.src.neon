@@ -4,3 +4,12 @@ includes:
 parameters:
 	level: max
 	resultCachePath: %currentWorkingDirectory%/var/tools/PHPStan/resultCache.src.php
+
+	ignoreErrors:
+		# phpstan does not recognize reflection class checks
+		- message: '#^Array \(array\<string, class-string\<Nette\\Application\\IPresenter\>\>\) does not accept class-string\<object\>\.$#'
+		  path: ../src/Mapping/DefaultPresenterFactory.php
+		  count: 2
+		- message: '#^Method (.+)getPresenterClass\(\) should return class-string\<Nette\\Application\\IPresenter\> but returns class-string\<object\>\.$#'
+		  path: ../src/Mapping/DefaultPresenterFactory.php
+		  count: 1
