@@ -1,0 +1,65 @@
+<?php declare(strict_types = 1);
+
+use OriNette\Application\ApplicationMap\ApplicationMap;
+use Tracy\Helpers;
+
+/** @var ApplicationMap $map */
+
+?>
+<h1>Application map</h1>
+
+<div class="tracy-inner">
+	<table style="width: 100%;">
+		<thead>
+		<tr>
+			<th>Presenter</th>
+			<th>Action</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($map->getAll() as $presenterMeta): ?>
+			<?php $presenter = $presenterMeta->getClass() ?>
+			<?php $editUri = Helpers::editorUri((new ReflectionClass($presenter))->getFileName()); ?>
+			<?php $actionUrlPairs = $presenterMeta->getActionUrlPairs(); ?>
+
+			<?php if ($actionUrlPairs === []): ?>
+				<tr>
+					<td colspan="2">
+						<a href="<?= $editUri ?>">
+							<?= $presenter ?>
+						</a>
+					</td>
+				</tr>
+			<?php else: ?>
+
+				<?php
+				$i = 1;
+				?>
+				<?php foreach ($actionUrlPairs as $action => $url): ?>
+					<tr>
+						<?php if ($i === 1): ?>
+							<td rowspan="<?= count($actionUrlPairs) ?>">
+								<a href="<?= $editUri ?>">
+									<?= $presenter ?>
+								</a>
+							</td>
+						<?php endif; ?>
+						<td>
+							<?php if ($url !== null): ?>
+								<a href="<?= $url ?>">
+									<?= $action !== '' ? $action : 'default' ?>
+								</a>
+							<?php else: ?>
+								<?= $action !== '' ? $action : 'default' ?>
+							<?php endif; ?>
+						</td>
+					</tr>
+					<?php $i++; ?>
+				<?php endforeach; ?>
+
+			<?php endif; ?>
+
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
