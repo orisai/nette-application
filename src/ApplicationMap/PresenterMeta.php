@@ -15,8 +15,10 @@ final class PresenterMeta
 	/** @var class-string<IPresenter> */
 	private string $class;
 
-	/** @var array<string, string|null> */
-	private array $actionUrlPairs = [];
+	/** @var array<string, string|MissingLink> */
+	private array $actionLinkPairs = [];
+
+	private ?string $mappedName = null;
 
 	/**
 	 * @param class-string<IPresenter> $class
@@ -26,14 +28,17 @@ final class PresenterMeta
 		$this->class = $class;
 	}
 
-	public function addActionUrlPair(string $action, ?string $url): void
+	/**
+	 * @param string|MissingLink $link
+	 */
+	public function addActionLinkPair(string $action, $link): void
 	{
-		$this->actionUrlPairs[$action] = $url;
+		$this->actionLinkPairs[$action] = $link;
 	}
 
 	public function hasAction(string $action): bool
 	{
-		return array_key_exists($action, $this->actionUrlPairs);
+		return array_key_exists($action, $this->actionLinkPairs);
 	}
 
 	/**
@@ -45,13 +50,23 @@ final class PresenterMeta
 	}
 
 	/**
-	 * @return array<string, string|null>
+	 * @return array<string, string|MissingLink>
 	 */
-	public function getActionUrlPairs(): array
+	public function getActionLinkPairs(): array
 	{
-		ksort($this->actionUrlPairs);
+		ksort($this->actionLinkPairs);
 
-		return $this->actionUrlPairs;
+		return $this->actionLinkPairs;
+	}
+
+	public function setMappedName(string $mappedName): void
+	{
+		$this->mappedName = $mappedName;
+	}
+
+	public function getMappedName(): ?string
+	{
+		return $this->mappedName;
 	}
 
 	/**
@@ -61,7 +76,8 @@ final class PresenterMeta
 	{
 		return [
 			'class' => $this->class,
-			'actionUrlPairs' => $this->actionUrlPairs,
+			'actionLinkPairs' => $this->actionLinkPairs,
+			'mappedName' => $this->mappedName,
 		];
 	}
 
@@ -71,7 +87,8 @@ final class PresenterMeta
 	public function __unserialize(array $data): void
 	{
 		$this->class = $data['class'];
-		$this->actionUrlPairs = $data['actionUrlPairs'];
+		$this->actionLinkPairs = $data['actionLinkPairs'];
+		$this->mappedName = $data['mappedName'];
 	}
 
 }

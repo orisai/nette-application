@@ -20,14 +20,18 @@ use Tracy\Helpers;
 		<?php foreach ($map->getAll() as $presenterMeta): ?>
 			<?php $presenter = $presenterMeta->getClass() ?>
 			<?php $editUri = Helpers::editorUri((new ReflectionClass($presenter))->getFileName()); ?>
-			<?php $actionUrlPairs = $presenterMeta->getActionUrlPairs(); ?>
+			<?php $actionLinkPairs = $presenterMeta->getActionLinkPairs(); ?>
 
-			<?php if ($actionUrlPairs === []): ?>
+			<?php if ($actionLinkPairs === []): ?>
 				<tr>
 					<td colspan="2">
 						<a href="<?= $editUri ?>">
 							<?= $presenter ?>
 						</a>
+						<?php if (($mappedName = $presenterMeta->getMappedName()) !== null): ?>
+							<br>
+							<?= $mappedName ?>
+						<?php endif; ?>
 					</td>
 				</tr>
 			<?php else: ?>
@@ -35,22 +39,24 @@ use Tracy\Helpers;
 				<?php
 				$i = 1;
 				?>
-				<?php foreach ($actionUrlPairs as $action => $url): ?>
+				<?php foreach ($actionLinkPairs as $action => $link): ?>
 					<tr>
 						<?php if ($i === 1): ?>
-							<td rowspan="<?= count($actionUrlPairs) ?>">
+							<td rowspan="<?= count($actionLinkPairs) ?>">
 								<a href="<?= $editUri ?>">
 									<?= $presenter ?>
 								</a>
 							</td>
 						<?php endif; ?>
 						<td>
-							<?php if ($url !== null): ?>
-								<a href="<?= $url ?>">
+							<?php if (is_string($link)): ?>
+								<a href="<?= $link ?>">
 									<?= $action !== '' ? $action : 'default' ?>
 								</a>
 							<?php else: ?>
-								<?= $action !== '' ? $action : 'default' ?>
+								<span <?php if ($link->isRouteMissing()): ?>style="color: #dc2626" <?php endif; ?>>
+									<?= $action !== '' ? $action : 'default' ?>
+								</span>
 							<?php endif; ?>
 						</td>
 					</tr>

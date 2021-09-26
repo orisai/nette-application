@@ -14,9 +14,7 @@ use OriNette\Application\ApplicationMap\LinkGeneratingPresenter;
 use OriNette\Application\ApplicationMap\Tracy\ApplicationMapPanel;
 use stdClass;
 use Tracy\Bar;
-use function array_values;
 use function assert;
-use function ksort;
 
 /**
  * @property-read stdClass $config
@@ -67,16 +65,13 @@ final class ApplicationMapExtension extends CompilerExtension
 		foreach ($builder->findByType(IPresenter::class) as $presenterDefinition) {
 			assert($presenterDefinition instanceof ServiceDefinition);
 			if ($presenterDefinition->getName() !== $this->presenterDefinition->getName()) {
-				$presenterName = $presenterDefinition->getType();
-				$presenterNames[$presenterName] = new PhpLiteral('\\' . $presenterName . '::class');
+				$presenterNames[] = new PhpLiteral("\\{$presenterDefinition->getType()}::class");
 			}
 		}
 
-		ksort($presenterNames);
-
 		$applicationMapDefinition = $builder->addDefinition($this->prefix('map'))
 			->setFactory(ApplicationMap::class, [
-				'presenterNames' => array_values($presenterNames),
+				'presenterClasses' => $presenterNames,
 				'presenter' => $this->presenterDefinition,
 			]);
 

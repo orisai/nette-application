@@ -13,7 +13,9 @@ use ReflectionClass;
 use ReflectionMethod;
 use function get_class;
 use function is_a;
+use function is_string;
 use function lcfirst;
+use function sort;
 use function str_contains;
 use function str_replace;
 
@@ -24,7 +26,7 @@ final class ApplicationMap
 {
 
 	/** @var array<int|string, class-string<IPresenter>> */
-	private array $presenterNames;
+	private array $presenterClasses;
 
 	private Cache $cache;
 
@@ -35,17 +37,17 @@ final class ApplicationMap
 	private LinkGeneratingPresenter $presenter;
 
 	/**
-	 * @param array<int|string, class-string<IPresenter>> $presenterNames
+	 * @param array<int|string, class-string<IPresenter>> $presenterClasses
 	 */
 	public function __construct(
-		array $presenterNames,
+		array $presenterClasses,
 		Storage $storage,
 		Container $container,
 		PresenterFactory $presenterFactory,
 		LinkGeneratingPresenter $presenter
 	)
 	{
-		$this->presenterNames = $presenterNames;
+		$this->presenterClasses = $presenterClasses;
 		$this->cache = new Cache($storage, 'orisai.application.map');
 		$this->container = $container;
 		$this->presenterFactory = $presenterFactory;
@@ -67,14 +69,19 @@ final class ApplicationMap
 			return $metas;
 		}
 
+		sort($this->presenterClasses);
 		$metas = [];
-		foreach ($this->presenterNames as $presenterClass) {
+		foreach ($this->presenterClasses as $presenterClass) {
 			$meta = $metas[$presenterClass] ?? null;
 			if ($meta === null) {
 				$metas[$presenterClass] = $meta = new PresenterMeta($presenterClass);
 			}
 
 			$presenterName = $this->presenterFactory->getPresenterName($presenterClass);
+
+			if ($presenterName !== $presenterClass) {
+				$meta->setMappedName($presenterName);
+			}
 
 			if (is_a($presenterClass, Presenter::class, true)) {
 				$this->handleUiPresenter($presenterClass, $presenterName, $meta);
@@ -110,7 +117,7 @@ final class ApplicationMap
 				$action = lcfirst($action);
 
 				if ($methodName === $actionMethodName) {
-					$this->generateLink($meta, $action, ":$presenterName:$action");
+					$this->generateLink($meta, $action, ":$presenterName:$action", $methodReflection);
 
 					continue;
 				}
@@ -118,40 +125,45 @@ final class ApplicationMap
 
 			if (str_contains($methodName, $renderMethodBaseName)) {
 				$action = str_replace($renderMethodBaseName, '', $methodName);
-				$renderMethodName = $presenterClass::formatRenderMethod($action);
-				$action = lcfirst($action);
+				if (!$meta->hasAction($action)) {
+					$renderMethodName = $presenterClass::formatRenderMethod($action);
+					$action = lcfirst($action);
 
-				if ($methodName === $renderMethodName) {
-					$this->generateLink($meta, $action, ":$presenterName:$action");
+					if ($methodName === $renderMethodName) {
+						$this->generateLink($meta, $action, ":$presenterName:$action", $methodReflection);
+					}
 				}
 			}
 		}
 
 		if (!$meta->hasAction('default') && !$meta->hasAction('')) {
-			$this->generateLink($meta, 'default', ":$presenterName:default", false);
+			$this->generateLink($meta, 'default', ":$presenterName:default", null, false);
 		}
 	}
 
 	private function handleIPresenter(string $presenterName, PresenterMeta $meta): void
 	{
-		$this->generateLink($meta, '__invoke', ":$presenterName:");
+		$this->generateLink($meta, '__invoke', ":$presenterName:", null);
 	}
 
 	private function generateLink(
 		PresenterMeta $meta,
 		string $action,
 		string $destination,
+		?ReflectionMethod $methodReflection,
 		bool $addWithoutLink = true
 	): void
 	{
 		try {
 			$link = $this->presenter->link($destination);
 		} catch (InvalidLinkException $exception) {
-			$link = null;
+			$link = $methodReflection !== null && $methodReflection->getNumberOfRequiredParameters() === 0
+				? new MissingLink(true)
+				: new MissingLink();
 		}
 
-		if ($link !== null || $addWithoutLink) {
-			$meta->addActionUrlPair($action, $link);
+		if (is_string($link) || $addWithoutLink) {
+			$meta->addActionLinkPair($action, $link);
 		}
 	}
 
