@@ -28,7 +28,7 @@ use function uksort;
 final class DefaultPresenterFactory implements PresenterFactory
 {
 
-	/** @var callable(class-string): IPresenter */
+	/** @var callable(class-string<IPresenter>): IPresenter */
 	private $factory;
 
 	/** @var array<string, class-string<IPresenter>> */
@@ -44,7 +44,7 @@ final class DefaultPresenterFactory implements PresenterFactory
 	private array $presenterMapping = [];
 
 	/**
-	 * @param callable(class-string): IPresenter $factory
+	 * @param callable(class-string<IPresenter>): IPresenter $factory
 	 */
 	public function __construct(callable $factory)
 	{
