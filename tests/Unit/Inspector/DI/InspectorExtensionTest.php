@@ -10,6 +10,8 @@ use OriNette\DI\Boot\ManualConfigurator;
 use PHPUnit\Framework\TestCase;
 use Tracy\Bar;
 use function dirname;
+use function mkdir;
+use const PHP_VERSION_ID;
 
 /**
  * @runTestsInSeparateProcesses
@@ -17,10 +19,22 @@ use function dirname;
 final class InspectorExtensionTest extends TestCase
 {
 
+	private string $rootDir;
+
+	protected function setUp(): void
+	{
+		parent::setUp();
+
+		$this->rootDir = dirname(__DIR__, 4);
+		if (PHP_VERSION_ID < 81_000) {
+			@mkdir("$this->rootDir/var/build");
+		}
+	}
+
 	public function testEnabled(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
-		$configurator->setDebugMode(true);
+		$configurator = new ManualConfigurator($this->rootDir);
+		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/extensions.neon');
 		$configurator->addConfig(__DIR__ . '/inspector.enabled.neon');
 
@@ -43,8 +57,8 @@ final class InspectorExtensionTest extends TestCase
 
 	public function testDisabled(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
-		$configurator->setDebugMode(true);
+		$configurator = new ManualConfigurator($this->rootDir);
+		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/extensions.neon');
 		$configurator->addConfig(__DIR__ . '/inspector.disabled.neon');
 
@@ -59,7 +73,7 @@ final class InspectorExtensionTest extends TestCase
 		$container->getByType(Application::class);
 
 		self::assertTrue($container->isCreated('application.application'));
-		self::assertTrue($container->isCreated('tracy.bar'));
+		self::assertFalse($container->isCreated('tracy.bar'));
 
 		$bar = $container->getByType(Bar::class);
 		self::assertNull($bar->getPanel('uiInspector.panel'));
