@@ -81,6 +81,7 @@ final class DefaultPresenterFactory implements PresenterFactory
 				);
 		}
 
+		/** @var ReflectionClass<IPresenter> $reflection */
 		$reflection = new ReflectionClass($class);
 
 		if (!$reflection->implementsInterface(IPresenter::class)) {
@@ -162,6 +163,7 @@ final class DefaultPresenterFactory implements PresenterFactory
 			}
 		}
 
+		/** @var ReflectionClass<IPresenter> $reflection */
 		$reflection = new ReflectionClass($class);
 
 		if (!$reflection->implementsInterface(IPresenter::class)) {
