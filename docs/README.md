@@ -25,9 +25,9 @@ To use it, register and enable extension:
 
 ```neon
 extensions:
-	applicationMap: OriNette\Application\ApplicationMap\DI\ApplicationMapExtension
+	orisai.application.map: OriNette\Application\ApplicationMap\DI\ApplicationMapExtension
 
-applicationMap:
+orisai.application.map:
 	enabled: true
 ```
 
@@ -40,8 +40,8 @@ To use it, register and enable extension:
 
 ```neon
 extensions:
-	uiInspector: OriNette\Application\Inspector\DI\InspectorExtension
+	orisai.application.inspector: OriNette\Application\Inspector\DI\InspectorExtension
 
-uiInspector:
+orisai.application.inspector:
 	enabled: true
 ```
