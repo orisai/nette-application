@@ -6,7 +6,7 @@ use Nette\Application\Application;
 use Nette\Application\IPresenter;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
-use Nette\PhpGenerator\PhpLiteral;
+use Nette\PhpGenerator\Literal;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use OriNette\Application\ApplicationMap\ApplicationMap;
@@ -65,7 +65,7 @@ final class ApplicationMapExtension extends CompilerExtension
 		foreach ($builder->findByType(IPresenter::class) as $presenterDefinition) {
 			assert($presenterDefinition instanceof ServiceDefinition);
 			if ($presenterDefinition->getName() !== $this->presenterDefinition->getName()) {
-				$presenterNames[] = new PhpLiteral("\\{$presenterDefinition->getType()}::class");
+				$presenterNames[] = new Literal("\\{$presenterDefinition->getType()}::class");
 			}
 		}
 
