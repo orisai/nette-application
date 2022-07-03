@@ -5,12 +5,10 @@ namespace OriNette\Application\Mapping;
 use Nette\Application\InvalidPresenterException;
 use Nette\Application\IPresenter;
 use Nette\DI\Container;
-use function array_keys;
-use function array_map;
+use function array_search;
 use function assert;
 use function count;
 use function implode;
-use function sprintf;
 
 final class StrictPresenterFactoryCallback
 {
@@ -31,24 +29,25 @@ final class StrictPresenterFactoryCallback
 			return $services[0];
 		}
 
-		$exact = array_keys(
-			array_map(
-				fn (string $name): string => $this->container->getServiceType($name),
-				$services,
-			),
-			$class,
-			true,
-		);
-
-		if (count($exact) === 1) {
-			return $services[$exact[0]];
+		$exact = [];
+		foreach ($services as $service) {
+			$serviceType = $this->container->getServiceType($service);
+			if ($serviceType === $class) {
+				$exact[] = $service;
+			}
 		}
 
-		throw new InvalidPresenterException(sprintf(
-			'Multiple services of type "%s" found: %s.',
-			$class,
-			implode(', ', $services),
-		));
+		if (count($exact) === 1) {
+			$i = array_search($exact[0], $services, true);
+
+			return $services[$i];
+		}
+
+		$servicesInline = implode(', ', $exact !== [] ? $exact : $services);
+
+		throw new InvalidPresenterException(
+			"Multiple services of type '$class' found: $servicesInline.",
+		);
 	}
 
 	/**
@@ -59,10 +58,9 @@ final class StrictPresenterFactoryCallback
 		$services = $this->container->findByType($class);
 
 		if ($services === []) {
-			throw new InvalidPresenterException(sprintf(
-				'Presenter "%s" is not registered as a service.',
-				$class,
-			));
+			throw new InvalidPresenterException(
+				"Presenter '$class' is not registered as a service.",
+			);
 		}
 
 		$service = $this->container->createService(

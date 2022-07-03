@@ -1,0 +1,6 @@
+services:
+	- Tests\OriNette\Application\Doubles\IPresenterImpl1
+	- Tests\OriNette\Application\Doubles\IPresenterImpl2
+	- Tests\OriNette\Application\Doubles\IPresenterImpl2
+	- Tests\OriNette\Application\Doubles\UiPresenterA
+	- Tests\OriNette\Application\Doubles\UiPresenterAB
