@@ -31,7 +31,10 @@ final class DefaultPresenterFactoryTest extends TestCase
 		$this->presenterFactory = new DefaultPresenterFactory($cb);
 	}
 
-	public function testMappingStandard(): void
+	/**
+	 * @dataProvider provideStandardMapping
+	 */
+	public function testStandardMapping(string $class, string $name): void
 	{
 		$factory = $this->presenterFactory;
 		$factory->setMapping([
@@ -39,21 +42,30 @@ final class DefaultPresenterFactoryTest extends TestCase
 			'Foo3' => 'My\App\*Mod\*Presenter',
 		]);
 
-		self::assertSame('FooPresenter', $factory->formatMappedPresenterClass('Foo'));
-		self::assertSame('FooModule\BarPresenter', $factory->formatMappedPresenterClass('Foo:Bar'));
-		self::assertSame('FooModule\BarModule\BazPresenter', $factory->formatMappedPresenterClass('Foo:Bar:Baz'));
-
-		self::assertSame('Foo2Presenter', $factory->formatMappedPresenterClass('Foo2'));
-		self::assertSame('App2\BarPresenter', $factory->formatMappedPresenterClass('Foo2:Bar'));
-		self::assertSame('App2\Bar\BazPresenter', $factory->formatMappedPresenterClass('Foo2:Bar:Baz'));
-
-		self::assertSame('My\App\BarPresenter', $factory->formatMappedPresenterClass('Foo3:Bar'));
-		self::assertSame('My\App\BarMod\BazPresenter', $factory->formatMappedPresenterClass('Foo3:Bar:Baz'));
-
-		self::assertSame('NetteModule\FooPresenter', $factory->formatMappedPresenterClass('Nette:Foo'));
+		self::assertSame($class, $factory->formatMappedPresenterClass($name));
+		self::assertSame($name, $factory->formatMappedPresenterName($class));
 	}
 
-	public function testMappingWithUnspecifiedModule(): void
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function provideStandardMapping(): Generator
+	{
+		yield ['FooPresenter', 'Foo'];
+		yield ['FooModule\BarPresenter', 'Foo:Bar'];
+		yield ['FooModule\BarModule\BazPresenter', 'Foo:Bar:Baz'];
+		yield ['Foo2Presenter', 'Foo2'];
+		yield ['App2\BarPresenter', 'Foo2:Bar'];
+		yield ['App2\Bar\BazPresenter', 'Foo2:Bar:Baz'];
+		yield ['My\App\BarPresenter', 'Foo3:Bar'];
+		yield ['My\App\BarMod\BazPresenter', 'Foo3:Bar:Baz'];
+		yield ['NetteModule\FooPresenter', 'Nette:Foo'];
+	}
+
+	/**
+	 * @dataProvider provideMappingWithUnspecifiedModule
+	 */
+	public function testMappingWithUnspecifiedModule(string $class, string $name): void
 	{
 		$factory = $this->presenterFactory;
 		$factory->setMapping([
@@ -61,34 +73,65 @@ final class DefaultPresenterFactoryTest extends TestCase
 			'Foo3' => 'My\App\*Presenter',
 		]);
 
-		self::assertSame('Foo2Presenter', $factory->formatMappedPresenterClass('Foo2'));
-		self::assertSame('App2\BarPresenter', $factory->formatMappedPresenterClass('Foo2:Bar'));
-		self::assertSame('App2\BarModule\BazPresenter', $factory->formatMappedPresenterClass('Foo2:Bar:Baz'));
-
-		self::assertSame('My\App\BarPresenter', $factory->formatMappedPresenterClass('Foo3:Bar'));
-		self::assertSame('My\App\BarModule\BazPresenter', $factory->formatMappedPresenterClass('Foo3:Bar:Baz'));
+		self::assertSame($class, $factory->formatMappedPresenterClass($name));
+		self::assertSame($name, $factory->formatMappedPresenterName($class));
 	}
 
-	public function testMappingAllToOne(): void
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function provideMappingWithUnspecifiedModule(): Generator
+	{
+		yield ['Foo2Presenter', 'Foo2'];
+		yield ['App2\BarPresenter', 'Foo2:Bar'];
+		yield ['App2\BarModule\BazPresenter', 'Foo2:Bar:Baz'];
+		yield ['My\App\BarPresenter', 'Foo3:Bar'];
+		yield ['My\App\BarModule\BazPresenter', 'Foo3:Bar:Baz'];
+	}
+
+	/**
+	 * @dataProvider provideMappingAllToOne
+	 */
+	public function testMappingAllToOne(string $class, string $name): void
 	{
 		$factory = $this->presenterFactory;
 		$factory->setMapping([
 			'*' => ['App', 'Module\*', 'Presenter\*'],
 		]);
-		self::assertSame('App\Module\Foo\Presenter\Bar', $factory->formatMappedPresenterClass('Foo:Bar'));
-		self::assertSame(
-			'App\Module\Universe\Module\Foo\Presenter\Bar',
-			$factory->formatMappedPresenterClass('Universe:Foo:Bar'),
-		);
+
+		self::assertSame($class, $factory->formatMappedPresenterClass($name));
+		self::assertSame($name, $factory->formatMappedPresenterName($class));
 	}
 
-	public function testMappingUniversal(): void
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function provideMappingAllToOne(): Generator
+	{
+		yield ['App\Module\Foo\Presenter\Bar', 'Foo:Bar'];
+		yield ['App\Module\Universe\Module\Foo\Presenter\Bar', 'Universe:Foo:Bar'];
+	}
+
+	/**
+	 * @dataProvider provideUniversalMapping
+	 */
+	public function testUniversalMapping(string $class, string $name): void
 	{
 		$factory = $this->presenterFactory;
 		$factory->setMapping([
 			'*' => ['', '*', '*'],
 		]);
-		self::assertSame('Module\Foo\Bar', $factory->formatMappedPresenterClass('Module:Foo:Bar'));
+
+		self::assertSame($class, $factory->formatMappedPresenterClass($name));
+		self::assertSame($name, $factory->formatMappedPresenterName($class));
+	}
+
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function provideUniversalMapping(): Generator
+	{
+		yield ['Module\Foo\Bar', 'Module:Foo:Bar'];
 	}
 
 	/**
