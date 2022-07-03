@@ -7,6 +7,7 @@ Extras for [nette/application](https://github.com/nette/application/)
 - [Setup](#setup)
 - [Application map](#application-map)
 - [Component inspector](#component-inspector)
+- [Presenter mapping](#presenter-mapping)
 
 ## Setup
 
@@ -31,6 +32,8 @@ orisai.application.map:
 	enabled: true
 ```
 
+You will also need to set up our [reworked presenter mapping](#presenter-mapping) to make it work.
+
 ## Component inspector
 
 Component inspector is a [Tracy](https://github.com/nette/tracy/) panel which lists all Nette components with useful
@@ -44,4 +47,27 @@ extensions:
 
 orisai.application.inspector:
 	enabled: true
+```
+
+## Presenter mapping
+
+Overwrite default presenter factory service for:
+
+- `class-string<IPresenter>` to presenter name mapping (required by [application map](#application-map))
+- mapping of each presenter individually
+
+```neon
+services:
+	application.presenterFactory:
+		factory: OriNette\Application\Mapping\DefaultPresenterFactory
+		type: OriNette\Application\Mapping\PresenterFactory
+```
+
+Change also presenter factory callback to make sure all presenters are registered as services:
+
+```neon
+services:
+	application.presenterFactory:
+		arguments:
+			factory: OriNette\Application\Mapping\StrictPresenterFactoryCallback()
 ```
