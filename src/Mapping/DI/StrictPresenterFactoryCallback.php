@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace OriNette\Application\Mapping;
+namespace OriNette\Application\Mapping\DI;
 
 use Nette\Application\InvalidPresenterException;
 use Nette\Application\IPresenter;

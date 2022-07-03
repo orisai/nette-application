@@ -1,10 +1,10 @@
 <?php declare(strict_types = 1);
 
-namespace Tests\OriNette\Application\Unit\Mapping;
+namespace Tests\OriNette\Application\Unit\Mapping\DI;
 
 use Nette\Application\InvalidPresenterException;
 use Nette\Application\IPresenter;
-use OriNette\Application\Mapping\StrictPresenterFactoryCallback;
+use OriNette\Application\Mapping\DI\StrictPresenterFactoryCallback;
 use OriNette\DI\Boot\ManualConfigurator;
 use PHPUnit\Framework\TestCase;
 use Tests\OriNette\Application\Doubles\IPresenterImpl1;
@@ -18,7 +18,7 @@ final class StrictPresenterFactoryCallbackTest extends TestCase
 
 	public function testNotAService(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 3));
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
 		$configurator->setForceReloadContainer();
 
 		$container = $configurator->createContainer();
@@ -35,7 +35,7 @@ final class StrictPresenterFactoryCallbackTest extends TestCase
 
 	public function testExists(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 3));
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
 		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/StrictPresenterFactoryCallback.neon');
 
@@ -49,7 +49,7 @@ final class StrictPresenterFactoryCallbackTest extends TestCase
 
 	public function testMultipleServicesCollision(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 3));
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
 		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/StrictPresenterFactoryCallback.neon');
 
@@ -67,7 +67,7 @@ final class StrictPresenterFactoryCallbackTest extends TestCase
 
 	public function testMultipleExactMatchCollision(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 3));
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
 		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/StrictPresenterFactoryCallback.neon');
 
@@ -85,7 +85,7 @@ final class StrictPresenterFactoryCallbackTest extends TestCase
 
 	public function testMultipleServicesPreferExactMatch(): void
 	{
-		$configurator = new ManualConfigurator(dirname(__DIR__, 3));
+		$configurator = new ManualConfigurator(dirname(__DIR__, 4));
 		$configurator->setForceReloadContainer();
 		$configurator->addConfig(__DIR__ . '/StrictPresenterFactoryCallback.neon');
 

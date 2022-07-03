@@ -77,5 +77,5 @@ Change also presenter factory callback to make sure all presenters are registere
 services:
 	application.presenterFactory:
 		arguments:
-			factory: OriNette\Application\Mapping\StrictPresenterFactoryCallback()
+			factory: OriNette\Application\Mapping\DI\StrictPresenterFactoryCallback()
 ```
