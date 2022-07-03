@@ -6,6 +6,7 @@ Extras for [nette/application](https://github.com/nette/application/)
 
 - [Setup](#setup)
 - [Application map](#application-map)
+  - [Debug panel](#debug-panel)
 - [Component inspector](#component-inspector)
 - [Presenter mapping](#presenter-mapping)
 
@@ -22,17 +23,24 @@ composer require orisai/nette-application
 Application map is a [Tracy](https://github.com/nette/tracy/) panel which lists all Nette presenters and their actions
 with corresponding links.
 
-To use it, register and enable extension:
+To use it, register extension:
 
 ```neon
 extensions:
 	orisai.application.map: OriNette\Application\ApplicationMap\DI\ApplicationMapExtension
-
-orisai.application.map:
-	enabled: true
 ```
 
 You will also need to set up our [reworked presenter mapping](#presenter-mapping) to make it work.
+
+### Debug panel
+
+To show all presenters, their actions and links to them in Tracy panel, enable `debug > panel` option.
+
+```neon
+orisai.application.map:
+	debug:
+		panel: %debugMode%
+```
 
 ## Component inspector
 

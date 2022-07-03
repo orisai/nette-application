@@ -27,7 +27,9 @@ final class ApplicationMapExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'enabled' => Expect::bool(false),
+			'debug' => Expect::structure([
+				'panel' => Expect::bool(false),
+			]),
 		]);
 	}
 
@@ -36,11 +38,6 @@ final class ApplicationMapExtension extends CompilerExtension
 		parent::loadConfiguration();
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->config;
-
-		if (!$config->enabled) {
-			return;
-		}
 
 		$this->presenterDefinition = $builder->addDefinition($this->prefix('presenter'))
 			->setFactory(LinkGeneratingPresenter::class)
@@ -53,10 +50,6 @@ final class ApplicationMapExtension extends CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->config;
-
-		if (!$config->enabled) {
-			return;
-		}
 
 		$applicationDefinition = $builder->getDefinitionByType(Application::class);
 		assert($applicationDefinition instanceof ServiceDefinition);
@@ -75,14 +68,16 @@ final class ApplicationMapExtension extends CompilerExtension
 				'presenter' => $this->presenterDefinition,
 			]);
 
-		$applicationDefinition->addSetup(
-			[self::class, 'setupPanel'],
-			[
-				"$this->name.panel",
-				$builder->getDefinitionByType(Bar::class),
-				$applicationMapDefinition,
-			],
-		);
+		if ($config->debug->panel) {
+			$applicationDefinition->addSetup(
+				[self::class, 'setupPanel'],
+				[
+					"$this->name.panel",
+					$builder->getDefinitionByType(Bar::class),
+					$applicationMapDefinition,
+				],
+			);
+		}
 	}
 
 	public static function setupPanel(

@@ -19,9 +19,6 @@ use function sort;
 use function str_contains;
 use function str_replace;
 
-/**
- * @internal
- */
 final class ApplicationMap
 {
 
