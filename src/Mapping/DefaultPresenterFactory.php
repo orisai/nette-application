@@ -114,12 +114,16 @@ final class DefaultPresenterFactory implements PresenterFactory
 		} elseif (is_string($mask)) {
 			$m = Strings::match($mask, '#^\\\\?([\w\\\\]*\\\\)?(\w*\*\w*?\\\\)?([\w\\\\]*\*\w*)\z#');
 			if ($m === null) {
+				$module = $module === '' ? '*' : $module;
+
 				throw InvalidArgument::create()
 					->withMessage("Invalid mapping mask '$mask' for module '$module'.");
 			}
 
-			$this->moduleMapping[$module] = [$m[1], $m[2] ?? '*Module\\', $m[3]];
+			$this->moduleMapping[$module] = [$m[1], $m[2] !== '' ? $m[2] : '*Module\\', $m[3]];
 		} else {
+			$module = $module === '' ? '*' : $module;
+
 			throw InvalidArgument::create()
 				->withMessage("Invalid mapping mask for module '$module'.");
 		}
@@ -183,7 +187,10 @@ final class DefaultPresenterFactory implements PresenterFactory
 		return $this->presenterClassCache[$name] = $reflection->getName();
 	}
 
-	private function formatMappedPresenterClass(string $name): string
+	/**
+	 * @internal
+	 */
+	public function formatMappedPresenterClass(string $name): string
 	{
 		$parts = explode(':', $name);
 		$presenterName = array_pop($parts);
@@ -237,9 +244,9 @@ final class DefaultPresenterFactory implements PresenterFactory
 	}
 
 	/**
-	 * @param class-string<IPresenter> $class
+	 * @internal
 	 */
-	private function formatMappedPresenterName(string $class): ?string
+	public function formatMappedPresenterName(string $class): ?string
 	{
 		foreach ($this->moduleMapping as $module => $mapping) {
 			$mapping = str_replace(['\\', '*'], ['\\\\', '(\w+)'], $mapping);
