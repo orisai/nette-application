@@ -59,23 +59,19 @@ orisai.application.inspector:
 
 ## Presenter mapping
 
-Overwrite default presenter factory service for:
+Overwrite default presenter factory for:
 
 - `class-string<IPresenter>` to presenter name mapping (required by [application map](#application-map))
 - mapping of each presenter individually
 
 ```neon
-services:
-	application.presenterFactory:
-		factory: OriNette\Application\Mapping\DefaultPresenterFactory
-		type: OriNette\Application\Mapping\PresenterFactory
+extensions:
+	orisai.application.presenterFactory: OriNette\Application\Mapping\DI\PresenterFactoryExtension
 ```
 
 Change also presenter factory callback to make sure all presenters are registered as services:
 
 ```neon
-services:
-	application.presenterFactory:
-		arguments:
-			factory: OriNette\Application\Mapping\DI\StrictPresenterFactoryCallback()
+orisai.application.presenterFactory:
+	presenterConstructor: 'strict'
 ```

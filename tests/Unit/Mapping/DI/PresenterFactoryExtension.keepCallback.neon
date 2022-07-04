@@ -1,0 +1,6 @@
+extensions:
+	nette.http: Nette\Bridges\HttpDI\HttpExtension
+	nette.routing: Nette\Bridges\ApplicationDI\RoutingExtension
+
+	nette.application: Nette\Bridges\ApplicationDI\ApplicationExtension
+	orisai.application.presenterFactory: OriNette\Application\Mapping\DI\PresenterFactoryExtension
