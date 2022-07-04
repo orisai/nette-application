@@ -161,6 +161,27 @@ final class DefaultPresenterFactoryTest extends TestCase
 	}
 
 	/**
+	 * @dataProvider provideUsingClassDirectly
+	 */
+	public function testUsingClassDirectly(string $class, string $name): void
+	{
+		$factory = $this->presenterFactory;
+		$factory->setMapping([]);
+
+		self::assertSame($class, $factory->getPresenterClass($name));
+		self::assertSame($name, $factory->getPresenterName($class));
+	}
+
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function provideUsingClassDirectly(): Generator
+	{
+		yield [IPresenterImpl1::class, IPresenterImpl1::class];
+		yield [IPresenterImpl2::class, IPresenterImpl2::class];
+	}
+
+	/**
 	 * @param array<string, string|array<string>> $mapping
 	 *
 	 * @dataProvider provideInvalidMapping
