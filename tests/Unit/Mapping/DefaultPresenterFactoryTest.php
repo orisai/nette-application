@@ -7,6 +7,8 @@ use Nette\Application\IPresenter;
 use OriNette\Application\Mapping\DefaultPresenterFactory;
 use Orisai\Exceptions\Logic\InvalidArgument;
 use PHPUnit\Framework\TestCase;
+use Tests\OriNette\Application\Doubles\IPresenterImpl1;
+use Tests\OriNette\Application\Doubles\IPresenterImpl2;
 
 final class DefaultPresenterFactoryTest extends TestCase
 {
@@ -132,6 +134,30 @@ final class DefaultPresenterFactoryTest extends TestCase
 	public function provideUniversalMapping(): Generator
 	{
 		yield ['Module\Foo\Bar', 'Module:Foo:Bar'];
+	}
+
+	/**
+	 * @dataProvider provideExactPresenterMapping
+	 */
+	public function testExactPresenterMapping(string $class, string $name): void
+	{
+		$factory = $this->presenterFactory;
+		$factory->setMapping([
+			'Doggo:Does:Bjork' => IPresenterImpl1::class,
+			'Neko:Does:Nyan' => IPresenterImpl2::class,
+		]);
+
+		self::assertSame($class, $factory->getPresenterClass($name));
+		self::assertSame($name, $factory->getPresenterName($class));
+	}
+
+	/**
+	 * @return Generator<array<mixed>>
+	 */
+	public function provideExactPresenterMapping(): Generator
+	{
+		yield [IPresenterImpl1::class, 'Doggo:Does:Bjork'];
+		yield [IPresenterImpl2::class, 'Neko:Does:Nyan'];
 	}
 
 	/**
