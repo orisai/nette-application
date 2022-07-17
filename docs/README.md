@@ -8,6 +8,7 @@ Extras for [nette/application](https://github.com/nette/application/)
 - [Application map](#application-map)
   - [Debug panel](#debug-panel)
 - [Component inspector](#component-inspector)
+- [Form monitor](#form-monitor)
 - [Presenter mapping](#presenter-mapping)
 
 ## Setup
@@ -54,7 +55,24 @@ extensions:
 	orisai.application.inspector: OriNette\Application\Inspector\DI\InspectorExtension
 
 orisai.application.inspector:
-	enabled: true
+	enabled: %debugMode%
+```
+
+## Form monitor
+
+Form monitor is a [Tracy](https://github.com/nette/tracy/) panel which lists all errors from a submitted
+form (`Nette\Application\UI\Form`).
+
+To use it, register and enable extension:
+
+```neon
+extensions:
+	orisai.application.formMonitor: OriNette\Application\FormMonitor\DI\FormMonitorExtension
+
+orisai.application.formMonitor:
+	enabled: %debugMode%
+	debug:
+		panel: %debugMode%
 ```
 
 ## Presenter mapping

@@ -1,0 +1,9 @@
+extensions:
+	orisai.application.formMonitor: OriNette\Application\FormMonitor\DI\FormMonitorExtension
+
+	nette.application: Nette\Bridges\ApplicationDI\ApplicationExtension
+	nette.http: Nette\Bridges\HttpDI\HttpExtension
+	nette.routing: Nette\Bridges\ApplicationDI\RoutingExtension
+
+orisai.application.formMonitor:
+	enabled: true

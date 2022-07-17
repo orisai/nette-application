@@ -1,0 +1,18 @@
+<?php declare(strict_types = 1);
+
+use OriNette\Application\FormMonitor\FormStack;
+use Tracy\Dumper;
+
+/** @var FormStack $formStack */
+/** @var array<int|string, array<string, string>> $errors */
+
+?>
+<h1>Forms monitor</h1>
+
+<div class="tracy-inner">
+	<?php foreach ($formStack->getAll() as $componentName => $form): ?>
+		<?php Dumper::dump($form->getElementPrototype()->id) ?>
+		<?php Dumper::dump($componentName) ?>
+		<?php Dumper::dump($errors[$componentName] ?? []) ?>
+	<?php endforeach; ?>
+</div>

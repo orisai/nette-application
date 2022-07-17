@@ -1,0 +1,9 @@
+extensions:
+	tracy: Tracy\Bridges\Nette\TracyExtension
+
+	orisai.application.formMonitor: OriNette\Application\FormMonitor\DI\FormMonitorExtension
+
+orisai.application.formMonitor:
+	enabled: true
+	debug:
+		panel: true

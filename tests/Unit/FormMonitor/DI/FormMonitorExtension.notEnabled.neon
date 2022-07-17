@@ -1,0 +1,2 @@
+extensions:
+	orisai.application.formMonitor: OriNette\Application\FormMonitor\DI\FormMonitorExtension

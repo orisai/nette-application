@@ -1,0 +1,5 @@
+extensions:
+	orisai.application.formMonitor: OriNette\Application\FormMonitor\DI\FormMonitorExtension
+
+orisai.application.formMonitor:
+	enabled: true
