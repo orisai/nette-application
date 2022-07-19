@@ -6,7 +6,9 @@ Extras for [nette/application](https://github.com/nette/application/)
 
 - [Setup](#setup)
 - [Application map](#application-map)
-  - [Debug panel](#debug-panel)
+	- [Debug panel](#debug-panel)
+- [Canonical link](#canonical-link)
+	- [Extra parameters](#extra-parameters)
 - [Component inspector](#component-inspector)
 - [Form monitor](#form-monitor)
 - [Presenter mapping](#presenter-mapping)
@@ -41,6 +43,65 @@ To show all presenters, their actions and links to them in Tracy panel, enable `
 orisai.application.map:
 	debug:
 		panel: %debugMode%
+```
+
+## Canonical link
+
+Generate canonical version of current url for better site indexing by webcrawlers.
+
+Register service:
+
+```neon
+services:
+	- OriNette\Application\CanonicalLink\CanonicalLinker()
+```
+
+Generate link to current page:
+
+- without persistent parameters (of presenter and all components)
+- without user-defined [extra parameters](#extra-parameters)
+
+> Don't do this for error presenter. It is not routable and generating link would fail.
+
+```php
+use Nette\Application\UI\Presenter;
+use OriNette\Application\CanonicalLink\CanonicalLinker;
+
+abstract class BasePresenter extends Presenter
+{
+
+	private CanonicalLinker $canonicalLinker;
+
+	final public function inject(CanonicalLinker $canonicalLinker): void
+	{
+		$this->canonicalLinker = $canonicalLinker;
+	}
+
+	public function beforeRender(): void
+	{
+		parent::beforeRender();
+
+		$this->template->canonicalLink = $this->canonicalLinker->linkForPresenter($this);
+	}
+
+}
+```
+
+Render HTML tags for unique url:
+
+```latte
+
+<meta property="og:url" content="{$canonicalLink}">
+<link rel="canonical" href="{$canonicalLink}">
+```
+
+### Extra parameters
+
+Optionally, specify additional unwanted params:
+
+```neon
+services:
+	- OriNette\Application\CanonicalLink\CanonicalLinker(['do'])
 ```
 
 ## Component inspector
