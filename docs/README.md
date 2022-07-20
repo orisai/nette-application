@@ -9,8 +9,8 @@ Extras for [nette/application](https://github.com/nette/application/)
 	- [Debug panel](#debug-panel)
 - [Canonical link](#canonical-link)
 	- [Extra parameters](#extra-parameters)
-- [Component inspector](#component-inspector)
 - [Form monitor](#form-monitor)
+- [Inspector](#inspector)
 - [Presenter mapping](#presenter-mapping)
 
 ## Setup
@@ -104,21 +104,6 @@ services:
 	- OriNette\Application\CanonicalLink\CanonicalLinker(['do'])
 ```
 
-## Component inspector
-
-Component inspector is a [Tracy](https://github.com/nette/tracy/) panel which lists all Nette components with useful
-info and enables visual debug of these rendered via Latte.
-
-To use it, register and enable extension:
-
-```neon
-extensions:
-	orisai.application.inspector: OriNette\Application\Inspector\DI\InspectorExtension
-
-orisai.application.inspector:
-	enabled: %debugMode%
-```
-
 ## Form monitor
 
 Form monitor is a [Tracy](https://github.com/nette/tracy/) panel which lists all errors from a submitted
@@ -134,6 +119,21 @@ orisai.application.formMonitor:
 	enabled: %debugMode%
 	debug:
 		panel: %debugMode%
+```
+
+## Inspector
+
+Inspector is a [Tracy](https://github.com/nette/tracy/) panel which lists all Nette components with useful info and
+enables visual debug of these rendered via Latte.
+
+To use it, register and enable extension:
+
+```neon
+extensions:
+	orisai.application.inspector: OriNette\Application\Inspector\DI\InspectorExtension
+
+orisai.application.inspector:
+	enabled: %debugMode%
 ```
 
 ## Presenter mapping

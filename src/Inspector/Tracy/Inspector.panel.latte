@@ -1,6 +1,6 @@
-<h1>Component Inspector</h1>
+<h1>Inspector</h1>
 
-<div class="HorizontalStack tracy-ComponentInspector tracy-inner">
+<div class="HorizontalStack tracy-Inspector tracy-inner">
 	<div id="tree">
 		<input id="filter-query" type="text" placeholder="Filter">
 
@@ -12,7 +12,7 @@
 						<span style="margin-left: {$item->depth * 2}ex"></span>└ 
 					{/if}
 
-					<span n:if="!$item->isRenderable" class="tracy-ComponentInspector-type">
+					<span n:if="!$item->isRenderable" class="tracy-Inspector-type">
 						{$item->classShortName}
 					</span>
 
@@ -28,8 +28,8 @@
 	</div>
 
 	<div>
-		<div class="tracy-ComponentInspector-toolbar">
-			<button id="switch-button" class="tracy-ComponentInspector-toolbarItem">
+		<div class="tracy-Inspector-toolbar">
+			<button id="switch-button" class="tracy-Inspector-toolbarItem">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect width="16" height="16" fill="white"/>
 					<path d="M3.33333 3.33333V12.6667H5.85185V14H2.66667C2.29848 14 2 13.7015 2 13.3333V2.66667C2 2.29848 2.29848 2 2.66667 2H13.3333C13.7015 2 14 2.29848 14 2.66667V5.85185H12.6667V3.33333H3.33333Z"
@@ -41,7 +41,7 @@
 			</button>
 
 			<button id="live-preview-button"
-					class="tracy-ComponentInspector-toolbarItem tracy-ComponentInspector-toolbarItem--livePreview">
+					class="tracy-Inspector-toolbarItem tracy-Inspector-toolbarItem--livePreview">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<rect width="16" height="16" fill="white"/>
 					<path fill-rule="evenodd" clip-rule="evenodd"
@@ -54,7 +54,7 @@
 				Live Preview
 			</button>
 
-			<button id="three-dimensional-mode-button" class="tracy-ComponentInspector-toolbarItem">
+			<button id="three-dimensional-mode-button" class="tracy-Inspector-toolbarItem">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path d="M6.07202 13.4871V2.51294C6.07202 2.3503 6.22487 2.23096 6.38266 2.27041L13.6257 4.08116C13.737 4.10898 13.815 4.20898 13.815 4.3237V11.6763C13.815 11.791 13.737 11.891 13.6257 11.9189L6.38266 13.7296C6.22487 13.7691 6.07202 13.6497 6.07202 13.4871Z"
 						  stroke="currentColor" stroke-width="1.3"/>
@@ -72,26 +72,26 @@
 <style id="style-filtering"></style>
 
 <style>
-	#tracy-debug .tracy-ComponentInspector-toolbar {
+	#tracy-debug .tracy-Inspector-toolbar {
 		display: inline-flex;
 		margin-bottom: 8px;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbar .tracy-ComponentInspector-toolbarItem:first-child {
+	#tracy-debug .tracy-Inspector-toolbar .tracy-Inspector-toolbarItem:first-child {
 		border-top-left-radius: 3px;
 		border-bottom-left-radius: 3px;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbar .tracy-ComponentInspector-toolbarItem:last-child {
+	#tracy-debug .tracy-Inspector-toolbar .tracy-Inspector-toolbarItem:last-child {
 		border-top-right-radius: 3px;
 		border-bottom-right-radius: 3px;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbar .tracy-ComponentInspector-toolbarItem:not(:first-child) {
+	#tracy-debug .tracy-Inspector-toolbar .tracy-Inspector-toolbarItem:not(:first-child) {
 		margin-left: -1px;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbarItem {
+	#tracy-debug .tracy-Inspector-toolbarItem {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -101,30 +101,30 @@
 		transition: background-color 0.16s ease;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbarItem:hover {
+	#tracy-debug .tracy-Inspector-toolbarItem:hover {
 		background-color: #F5F4F2;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbarItem svg {
+	#tracy-debug .tracy-Inspector-toolbarItem svg {
 		margin-right: 6px;
 		flex: 0 0 auto;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbarItem.is-active {
+	#tracy-debug .tracy-Inspector-toolbarItem.is-active {
 		color: #0095ff;
 		position: relative;
 		z-index: 1;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbarItem--livePreview.is-on svg {
+	#tracy-debug .tracy-Inspector-toolbarItem--livePreview.is-on svg {
 		color: #42C122;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-toolbarItem--livePreview:not(.is-on) svg:nth-child(2) {
+	#tracy-debug .tracy-Inspector-toolbarItem--livePreview:not(.is-on) svg:nth-child(2) {
 		display: none;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-type {
+	#tracy-debug .tracy-Inspector-type {
 		border-radius: 2px;
 		padding: 2px 4px;
 		font-size: 80%;
@@ -133,11 +133,11 @@
 		background: #00000052;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-componentName {
+	#tracy-debug .tracy-Inspector-componentName {
 		font-size: 17px;
 	}
 
-	#tracy-debug .tracy-ComponentInspector-renderTime {
+	#tracy-debug .tracy-Inspector-renderTime {
 		margin-top: 16px;
 		opacity: 0.5;
 	}

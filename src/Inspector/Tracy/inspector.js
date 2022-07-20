@@ -59,7 +59,7 @@ function displayInfo(componentInfo) {
     divComponentName.textContent = componentInfo.name
 
     let html = `
-            <h2 class="tracy-ComponentInspector-componentName">${componentInfo.name}</h2>
+            <h2 class="tracy-Inspector-componentName">${componentInfo.name}</h2>
         `
 
     if (componentInfo.tree.length > 0) {
@@ -97,7 +97,7 @@ function displayInfo(componentInfo) {
 
     if (componentInfo.renderTime) {
     	html += `
-			<p class="tracy-ComponentInspector-renderTime">Render time: ${componentInfo.renderTime} seconds</p>
+			<p class="tracy-Inspector-renderTime">Render time: ${componentInfo.renderTime} seconds</p>
     	`
 	}
 
