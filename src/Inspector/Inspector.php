@@ -7,6 +7,7 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use ReflectionClass;
 use stdClass;
+use Tracy\Dumper;
 use Tracy\Helpers;
 use function assert;
 use function is_string;
@@ -93,6 +94,7 @@ final class Inspector
 			'shortName' => $reflection->getShortName(),
 			'fullName' => $reflection->getName(),
 			'editorUri' => Helpers::editorUri($fileName),
+			'dump' => Dumper::toHtml($component),
 		];
 	}
 
