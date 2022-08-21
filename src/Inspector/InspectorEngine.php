@@ -49,9 +49,9 @@ final class InspectorEngine extends Engine
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
 		if ($control instanceof Control) {
-			Debugger::timer();
+			$start = hrtime(true);
 			$output = parent::renderToString($name, $params, $block);
-			$renderTime = Debugger::timer();
+			$renderTime = (hrtime(true) - $start) / 1e+6;
 
 			return $this->wrapOutput($output, $control, $name, $renderTime);
 		}
