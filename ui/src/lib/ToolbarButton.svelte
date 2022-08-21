@@ -1,9 +1,9 @@
 <script lang="ts">
-	export let active = false
+    export let active = false
 </script>
 
 <button on:click|stopPropagation class:orisai-active={active}>
-	<slot />
+    <slot />
 </button>
 
 <style lang="sass">

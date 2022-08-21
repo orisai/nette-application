@@ -1,10 +1,10 @@
 <script lang="ts">
-	export let uri: string
-	export let type: "latte" | "php"
+    export let uri: string
+    export let type: "latte" | "php"
 </script>
 
-<a href="{uri}" class:orisai-latte={type === "latte"} class:orisai-php={type === "php"}>
-	{type}
+<a href={uri} class:orisai-latte={type === "latte"} class:orisai-php={type === "php"}>
+    {type}
 </a>
 
 <style lang="sass">

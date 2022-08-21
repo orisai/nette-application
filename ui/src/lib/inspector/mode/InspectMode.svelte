@@ -1,102 +1,113 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte'
-	import { mode } from '../store'
-	import Portal from "svelte-portal/src/Portal.svelte"
-	import { getComponentInfo } from './utils'
-	import type { ComponentInfo } from './utils'
-	import { SelectionMode } from './utils'
+    import { createEventDispatcher, onMount } from "svelte"
+    import { mode } from "../store"
+    import Portal from "svelte-portal/src/Portal.svelte"
+    import { getComponentInfo } from "./utils"
+    import type { ComponentInfo } from "./utils"
+    import { SelectionMode } from "./utils"
 
-	const dispatch = createEventDispatcher<{inspect: { component: ComponentInfo|null, selectionMode: SelectionMode }}>()
+    const dispatch = createEventDispatcher<{
+        inspect: { component: ComponentInfo | null; selectionMode: SelectionMode }
+    }>()
 
-	let componentName: string | null = null
-	let highlightingElement: HTMLDivElement
-	let selectionMode: SelectionMode = SelectionMode.Info
-	let invisible = true
-	let active = false
+    let componentName: string | null = null
+    let highlightingElement: HTMLDivElement
+    let selectionMode: SelectionMode = SelectionMode.Info
+    let invisible = true
+    let active = false
 
-	onMount(() => {
-		highlightingElement.addEventListener("transitionend", () => {
-			active = true
-		}, {
-			once: true
-		})
-	})
+    onMount(() => {
+        highlightingElement.addEventListener(
+            "transitionend",
+            () => {
+                active = true
+            },
+            {
+                once: true
+            }
+        )
+    })
 
-	function highlightElement(target: HTMLElement, name: string)
-	{
-		const domRect = target.getBoundingClientRect()
+    function highlightElement(target: HTMLElement, name: string) {
+        const domRect = target.getBoundingClientRect()
 
-		componentName = name
+        componentName = name
 
-		highlightingElement.style.transform = `translate3d(${domRect.left}px, ${domRect.top + window.document.documentElement.scrollTop}px, 0)`
-		highlightingElement.style.left = "0px"
-		highlightingElement.style.top = "0px"
-		highlightingElement.style.width = domRect.width + "px"
-		highlightingElement.style.height = domRect.height + "px"
-		invisible = false
-	}
+        highlightingElement.style.transform = `translate3d(${domRect.left}px, ${
+            domRect.top + window.document.documentElement.scrollTop
+        }px, 0)`
+        highlightingElement.style.left = "0px"
+        highlightingElement.style.top = "0px"
+        highlightingElement.style.width = domRect.width + "px"
+        highlightingElement.style.height = domRect.height + "px"
+        invisible = false
+    }
 
-	function handleMouseMove (event: MouseEvent) {
-		const componentInfo = getComponentInfo(event.target as HTMLElement)
+    function handleMouseMove(event: MouseEvent) {
+        const componentInfo = getComponentInfo(event.target as HTMLElement)
 
-		if (componentInfo !== null) {
-			highlightElement(componentInfo.componentElement, componentInfo.name)
-		} else {
-			invisible = true
-		}
-	}
+        if (componentInfo !== null) {
+            highlightElement(componentInfo.componentElement, componentInfo.name)
+        } else {
+            invisible = true
+        }
+    }
 
-	function handleClick(event: MouseEvent) {
-		event.preventDefault()
-		event.stopImmediatePropagation()
-		dispatch("inspect", {component: getComponentInfo(event.target as HTMLElement), selectionMode} )
-		$mode = null
-	}
+    function handleClick(event: MouseEvent) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        dispatch("inspect", {
+            component: getComponentInfo(event.target as HTMLElement),
+            selectionMode
+        })
+        $mode = null
+    }
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === "Escape") {
-			event.preventDefault()
-			event.stopImmediatePropagation()
-			$mode = null
-			return
-		}
+    function handleKeyDown(event: KeyboardEvent) {
+        if (event.key === "Escape") {
+            event.preventDefault()
+            event.stopImmediatePropagation()
+            $mode = null
+            return
+        }
 
-		if (event.metaKey || event.ctrlKey) {
-			selectionMode = SelectionMode.PHP
-		} else if (event.shiftKey) {
-			selectionMode = SelectionMode.Latte
-		} else {
-			selectionMode = SelectionMode.Info
-		}
-	}
+        if (event.metaKey || event.ctrlKey) {
+            selectionMode = SelectionMode.PHP
+        } else if (event.shiftKey) {
+            selectionMode = SelectionMode.Latte
+        } else {
+            selectionMode = SelectionMode.Info
+        }
+    }
 
-	function handleKeyUp () {
-		selectionMode = SelectionMode.Info
-	}
+    function handleKeyUp() {
+        selectionMode = SelectionMode.Info
+    }
 </script>
 
 <svelte:window
-	on:mousemove={handleMouseMove}
-	on:click={handleClick}
-	on:keydown={handleKeyDown}
-	on:keyup={handleKeyUp}
+    on:mousemove={handleMouseMove}
+    on:click={handleClick}
+    on:keydown={handleKeyDown}
+    on:keyup={handleKeyUp}
 />
 
 <Portal target={document.body}>
-	<div bind:this={highlightingElement}
-		 class="orisai-HighlightingElement"
-		 class:orisai-HighlightingElement--invisible={invisible}
-		 class:orisai-HighlightingElement--active={active}
-		 class:orisai-HighlightingElement--mode-info={selectionMode === SelectionMode.Info}
-		 class:orisai-HighlightingElement--mode-php={selectionMode === SelectionMode.PHP}
-		 class:orisai-HighlightingElement--mode-latte={selectionMode === SelectionMode.Latte}
-	>
-		<span class="orisai-HighlightingElement-name">
-			{componentName}
-			-
-			{selectionMode}
-		</span>
-	</div>
+    <div
+        bind:this={highlightingElement}
+        class="orisai-HighlightingElement"
+        class:orisai-HighlightingElement--invisible={invisible}
+        class:orisai-HighlightingElement--active={active}
+        class:orisai-HighlightingElement--mode-info={selectionMode === SelectionMode.Info}
+        class:orisai-HighlightingElement--mode-php={selectionMode === SelectionMode.PHP}
+        class:orisai-HighlightingElement--mode-latte={selectionMode === SelectionMode.Latte}
+    >
+        <span class="orisai-HighlightingElement-name">
+            {componentName}
+            -
+            {selectionMode}
+        </span>
+    </div>
 </Portal>
 
 <style lang="sass">

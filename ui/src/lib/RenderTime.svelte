@@ -1,13 +1,13 @@
 <script lang="ts">
-	export let time: number
-	export let showText = true
+    export let time: number
+    export let showText = true
 </script>
 
 <div>
-	{#if showText}
-		Render time:
-	{/if}
-	{time.toFixed(4)} ms
+    {#if showText}
+        Render time:
+    {/if}
+    {time.toFixed(4)} ms
 </div>
 
 <style lang="sass">
