@@ -85,7 +85,7 @@ final class InspectorPanel implements IBarPanel
 		$fullName = $this->getFullName($component);
 
 		$componentList[$fullName] = (object) [
-			'name' => $fullName,
+			'fullName' => $fullName,
 			'depth' => $depth,
 			'control' => $this->getControlInfo($component),
 			'template' => $component instanceof Control ? $this->storage->get($component) : null,
