@@ -30,12 +30,3 @@
 	on:mousemove={handleMouseMove}
 	on:keydown={handleKeyDown}
 />
-
-<style lang="sass">
-	:global(.orisai-Inspector-3dMode)
-		perspective: 1800px
-		transform-style: preserve-3d
-
-	:global(.orisai-Inspector-3dMode body)
-		transform-origin: center center
-</style>
