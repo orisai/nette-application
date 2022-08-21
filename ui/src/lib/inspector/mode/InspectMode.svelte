@@ -111,10 +111,10 @@
 
 	function getComponentInfo(element: HTMLElement): ComponentInfo|null
 	{
-		let node: Node = element
-		let commentNode: Node = null
+		let node: Node | null = element
+		let commentNode: Node | null = null
 		let inUnopenedComponent = false
-		let componentElement: HTMLElement = null
+		let componentElement: HTMLElement | null = null
 
 		const startControlRegExp = new RegExp("\{control (.+) ")
 		const endControlRegExp = new RegExp("\{\/control\}")
@@ -139,7 +139,7 @@
 					componentElement = node
 				}
 
-				if (node.previousSibling !== null) {
+				if (node.previousSibling) {
 					node = node.previousSibling;
 				} else {
 					node = node.parentNode;
@@ -148,13 +148,17 @@
 		}
 
 		if (commentNode === null || !startControlRegExp.test(commentNode.textContent.trim())) {
-			return null;
+			return null
 		}
 
 		const splitted = commentNode.textContent.trim().split(" ")
 		const name = splitted[1]
 		const data = JSON.parse(splitted[2].slice(0, -1))
 		const tree = data.tree || []
+
+		if (componentElement === null) {
+			return null
+		}
 
 		return {
 			componentElement: componentElement,

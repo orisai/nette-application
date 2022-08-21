@@ -19,13 +19,21 @@
 					{item.classShortName}
 				</span>
 			{/if}
+
 			{#if item.depth > 0}
 				<span style="margin-left: {item.depth * 2}ex"></span>└ 
 			{/if}
+
 			{item.name}
-			<a href="{item.editorLink}" class="orisai-php">
-				php
-			</a>
+
+			<div class="orisai-tag-list">
+				<a href="{item.editorLink}" class="orisai-tag orisai-tag--php">
+					php
+				</a>
+				<a href="{item.editorLink}" class="orisai-tag orisai-tag--latte">
+					latte
+				</a>
+			</div>
 		</li>
 	{/each}
 </ul>
@@ -49,7 +57,7 @@
 			background-color: #f5f4f2
 			color: var(--orisai-color-active)
 
-			.orisai-php
+			.orisai-tag-list
 				visibility: visible
 
 		&:not(:first-child)
@@ -71,21 +79,37 @@
 	.orisai-muted
 		opacity: 0.5
 
-	.orisai-php
-		display: inline-flex
+	.orisai-tag-list
+		display: flex
 		align-items: center
-		background-color: #b0b3d6
-		color: #fff !important
+		margin-left: auto
+		gap: 4px
+		visibility: hidden
+		padding-left: 16px
+
+	.orisai-tag
+		display: flex
+		align-items: center
 		border-radius: 48px
 		padding: 0 6px
 		font-size: 8px
 		font-style: italic
 		font-weight: bold
-		margin-left: auto
-		visibility: hidden
 		height: 16px
 
-		&:hover,
-		&:focus-visible
-			background-color: #787cb5 !important
+		&--php
+			background-color: #b0b3d6
+			color: #fff !important
+
+			&:hover,
+			&:focus-visible
+				background-color: #787cb5 !important
+
+		&--latte
+			background-color: #ffbe6c
+			color: #fff !important
+
+			&:hover,
+			&:focus-visible
+				background-color: #F1A443 !important
 </style>
