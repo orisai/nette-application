@@ -85,7 +85,7 @@ final class InspectorPanel implements IBarPanel
 		$reflection = new ReflectionClass($component);
 
 		$componentList[] = (object) [
-			'name' => $component->getName(),
+			'name' => $this->getFullName($component),
 			'depth' => $depth,
 			'render' => $component instanceof Control ? $this->storage->get($component) : null,
 			'classShortName' => (new ReflectionClass($component))->getShortName(),
@@ -98,6 +98,15 @@ final class InspectorPanel implements IBarPanel
 				$this->buildComponentList($componentList, $subcomponent, $subDepth);
 			}
 		}
+	}
+
+	private function getFullName(Component $component): string
+	{
+		if ($component instanceof Presenter) {
+			return '__PRESENTER__';
+		}
+
+		return $component->lookupPath(Presenter::class) ?? '__UNATTACHED_';
 	}
 
 }
