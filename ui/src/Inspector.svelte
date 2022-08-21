@@ -12,9 +12,9 @@
 
 	let selectedComponent: InspectorComponentItem | null = null
 
-	function findComponent (name: string): InspectorComponentItem | null
+	function findComponent (fullName: string): InspectorComponentItem | null
 	{
-		return componentList.filter(item => item.name === name)[0] ?? null
+		return componentList.filter(item => item.fullName === fullName)[0] ?? null
 	}
 
 	function handleSelect (event: Event & { detail: ComponentInfo | null }) {
@@ -32,7 +32,7 @@
 
 <div class="orisai-grid">
 	<div>
-		<ComponentList list={componentList} on:select={handleSelectComponent}/>
+		<ComponentList list={componentList} {selectedComponent} on:select={handleSelectComponent}/>
 	</div>
 
 	<div>

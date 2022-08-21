@@ -1,14 +1,6 @@
-interface RenderInfo {
-	className: string
-	file: string
-	name: string
-	templateFile: string
-	templateFileName: string
-}
-
 export interface InspectorComponentItem {
-	classShortName: string
+	control: { dump: string, editorUri: string, fullName: string, shortName: string }
 	depth: number
-	name: string
-	render: { renderTime: number, tree: RenderInfo[] } | null
+	fullName: string
+	template: null | { editorUri: string, fullName: string, renderTime: number, shortName: string }
 }

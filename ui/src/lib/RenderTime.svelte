@@ -1,9 +1,8 @@
 <script lang="ts">
-	export let timeInSeconds: number
+	export let time: number
 	export let showText = true
 
-	const timeInMs = Number((timeInSeconds * 1000).toFixed(4))
-	const slowRendered = timeInMs > 0.2
+	const slowRendered = time > 0.2
 </script>
 
 <div class:orisai-warning={slowRendered}>
@@ -15,7 +14,7 @@
 	{#if showText}
 		Render time:
 	{/if}
-	{timeInMs} ms
+	{time.toFixed(4)} ms
 </div>
 
 <style lang="sass">

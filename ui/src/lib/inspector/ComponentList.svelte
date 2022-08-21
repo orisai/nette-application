@@ -3,10 +3,16 @@
 	import { createEventDispatcher} from 'svelte'
 
 	export let list: InspectorComponentItem[]
+	export let selectedComponent: InspectorComponentItem | null
 
 	const dispatch = createEventDispatcher<{select: InspectorComponentItem}>()
 
 	let query: string = ""
+
+	function showFullName (name): boolean
+	{
+		return !/^__/.test(name)
+	}
 </script>
 
 <input bind:value={query} placeholder="Filter&hellip;" type="search">
@@ -15,28 +21,35 @@
 	{#each list as item}
 		<li
 			on:click={() => dispatch("select", item)}
-			class:orisai-muted={!item.name.toLowerCase().includes(query.toLowerCase())}
+			class:orisai-muted={
+				!item.fullName.toLowerCase().includes(query.toLowerCase())
+				&& !item.control.shortName.toLowerCase().includes(query.toLowerCase())
+			}
+			class:orisai-active={selectedComponent === item}
 		>
-			{#if item.render !== null}
-				<span>
-					{item.classShortName}
-				</span>
-			{/if}
-
 			{#if item.depth > 0}
 				<span style="margin-left: {item.depth * 2}ex"></span>└ 
 			{/if}
 
-			{item.name}
+			<b>
+				{item.control.shortName}
+			</b>
 
-<!--			<div class="orisai-tag-list">-->
-<!--				<a href="{item.editorLink}" class="orisai-tag orisai-tag&#45;&#45;php">-->
-<!--					php-->
-<!--				</a>-->
-<!--				<a href="{item.editorLink}" class="orisai-tag orisai-tag&#45;&#45;latte">-->
-<!--					latte-->
-<!--				</a>-->
-<!--			</div>-->
+			{#if showFullName(item.fullName)}
+				&nbsp;
+				({item.fullName})
+			{/if}
+
+			<div class="orisai-tag-list">
+				<a href="{item.control.editorUri}" class="orisai-tag orisai-tag--php">
+					php
+				</a>
+				{#if item.template !== null}
+					<a href="{item.template.editorUri}" class="orisai-tag orisai-tag--latte">
+						latte
+					</a>
+				{/if}
+			</div>
 		</li>
 	{/each}
 </ul>
@@ -57,14 +70,16 @@
 		transition: background-color 0.16s ease, opacity 0.2s ease
 
 		&:hover
-			background-color: #f5f4f2
-			color: var(--orisai-color-active)
-
 			.orisai-tag-list
 				visibility: visible
 
 		&:not(:first-child)
 			border-top: 1px solid var(--orisai-color-border)
+
+	li:hover,
+	.orisai-active
+		background-color: #f5f4f2
+		color: var(--orisai-color-active)
 
 	input
 		display: block
