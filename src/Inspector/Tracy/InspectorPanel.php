@@ -82,14 +82,13 @@ final class InspectorPanel implements IBarPanel
 	 */
 	private function buildComponentList(array &$componentList, Component $component, int $depth = 0): void
 	{
-		$reflection = new ReflectionClass($component);
+		$fullName = $this->getFullName($component);
 
-		$componentList[] = (object) [
-			'name' => $this->getFullName($component),
+		$componentList[$fullName] = (object) [
+			'name' => $fullName,
 			'depth' => $depth,
-			'render' => $component instanceof Control ? $this->storage->get($component) : null,
-			'classShortName' => (new ReflectionClass($component))->getShortName(),
-			'editorLink' => Helpers::editorUri($reflection->getFileName()),
+			'control' => $this->getControlInfo($component),
+			'template' => $component instanceof Control ? $this->storage->get($component) : null,
 		];
 
 		$subDepth = $depth + 1;
@@ -100,13 +99,27 @@ final class InspectorPanel implements IBarPanel
 		}
 	}
 
+	private function getControlInfo(Component $component): array
+	{
+		$reflection = new ReflectionClass($component);
+		$fileName = $reflection->getFileName();
+		assert(is_string($fileName));
+
+		return [
+			'shortName' => $reflection->getShortName(),
+			'fullName' => $reflection->getName(),
+			'editorUri' => Helpers::editorUri($fileName),
+		];
+	}
+
 	private function getFullName(Component $component): string
 	{
 		if ($component instanceof Presenter) {
 			return '__PRESENTER__';
 		}
 
-		return $component->lookupPath(Presenter::class) ?? '__UNATTACHED_';
+		return $component->lookupPath(Presenter::class, false)
+			?? '__UNATTACHED_' . spl_object_id($component);
 	}
 
 }

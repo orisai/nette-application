@@ -67,21 +67,14 @@ final class InspectorEngine extends Engine
 
 	private function wrapOutput(string $output, Control $control, string $file, float $renderTime): string
 	{
-		$controlTreeInfo = $this->getControlTreeInfo($control, $file);
-		$this->storage->add($control, [
-			'tree' => $controlTreeInfo,
-			'renderTime' => $renderTime,
-		]);
+		$info = $this->getTemplateInfo($file, $renderTime);
+		$this->storage->add($control, $info);
 
-		$name = $this->getFullName($control);
-		$pos = strpos($name, $control::NAME_SEPARATOR);
-		if ($pos !== false) {
-			$name = substr($name, $pos + 1);
-		}
+		$fullName = $this->getFullName($control);
 
-		$wrapped = "<!-- {control $name} -->" . PHP_EOL;
+		$wrapped = "<!-- {control $fullName} -->" . PHP_EOL;
 		$wrapped .= $output;
-		$wrapped .= "<!-- {/control $name} -->" . PHP_EOL;
+		$wrapped .= "<!-- {/control $fullName} -->" . PHP_EOL;
 
 		return $wrapped;
 	}
@@ -89,46 +82,22 @@ final class InspectorEngine extends Engine
 	/**
 	 * @return array<mixed>
 	 */
-	private function getControlTreeInfo(Control $control, string $file): array
+	private function getTemplateInfo(string $file, float $renderTime): array
 	{
-		$treeInfo = [];
-
-		$lastRenderable = $control;
-
-		$fileExists = file_exists($file);
-		$templateFile = $fileExists ? Helpers::editorUri($file) : '';
-		$templateFileName = $fileExists ? basename($file) : '';
-
-		while ($control !== null) {
-			$name = $control->getName() ?? '_UNATTACHED_';
-
-			if ($control instanceof Renderable) {
-				$reflection = new ReflectionClass($control);
-				$fileName = $reflection->getFileName();
-				assert(is_string($fileName));
-
-				$lastRenderable = $control;
-			}
-
-			$reflection = new ReflectionClass($lastRenderable);
-			$fileName = $reflection->getFileName();
-			assert(is_string($fileName));
-
-			array_unshift(
-				$treeInfo,
-				[
-					'name' => $name,
-					'templateFile' => $templateFile,
-					'templateFileName' => $templateFileName,
-					'file' => Helpers::editorUri($fileName),
-					'className' => $reflection->getName(),
-				],
-			);
-
-			$control = $control->getParent();
+		if (file_exists($file)) {
+			$editorUri = Helpers::editorUri($file);
+			$shortName = basename($file);
+		} else {
+			$editorUri = null;
+			$shortName = null;
 		}
 
-		return $treeInfo;
+		return [
+			'shortName' => $shortName,
+			'fullName' => $file,
+			'editorUri' => $editorUri,
+			'renderTime' => $renderTime,
+		];
 	}
 
 	private function getFullName(Component $component): string
@@ -137,7 +106,8 @@ final class InspectorEngine extends Engine
 			return '__PRESENTER__';
 		}
 
-		return $component->lookupPath(Presenter::class) ?? '__UNATTACHED_';
+		return $component->lookupPath(Presenter::class, false)
+			?? '__UNATTACHED_' . spl_object_id($component);
 	}
 
 }
