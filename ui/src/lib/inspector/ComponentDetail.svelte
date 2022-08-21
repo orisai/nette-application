@@ -1,21 +1,13 @@
 <script lang="ts">
 	import RenderTime from "../RenderTime.svelte";
+	import type { InspectorComponentItem } from './InspectorTypes'
 
-	export let component
-
-	let isError = false
-
-	// @todo
-	if (!component || !component.tree || !component.renderTime) {
-		isError = true
-	}
+	export let component: InspectorComponentItem
 </script>
 
-{#if isError}
-	Chyba @todo
-{:else}
-	<h2>{component.name}</h2>
-	{#if component.tree.length > 0}
+<h2>{component.name}</h2>
+{#if component.render !== null}
+	{#if component.render.tree.length > 0}
 		<table>
 			<thead>
 				<tr>
@@ -24,8 +16,9 @@
 					<th>Template</th>
 				</tr>
 			</thead>
-			{#each component.tree as info}
+			{#each component.render.tree as info}
 				<tr>
+
 					<td>{info.name}</td>
 					<td>
 						<a href="{info.file}">
@@ -42,9 +35,9 @@
 		</table>
 	{/if}
 
-	{#if component.renderTime}
+	{#if component.render.renderTime}
 		<div>
-			<RenderTime timeInSeconds={component.renderTime}/>
+			<RenderTime timeInSeconds={component.render.renderTime}/>
 		</div>
 	{/if}
 {/if}

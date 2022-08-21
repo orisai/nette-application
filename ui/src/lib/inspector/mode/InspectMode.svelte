@@ -3,6 +3,7 @@
 	import { mode } from '../store'
 	import Portal from "svelte-portal/src/Portal.svelte"
 	import { getComponentInfo } from './utils'
+	import type { ComponentInfo } from './utils'
 
 	enum HighlightingMode {
 		Info = "info",
@@ -10,7 +11,7 @@
 		Latte = "latte"
 	}
 
-	const dispatch = createEventDispatcher()
+	const dispatch = createEventDispatcher<{inspect: ComponentInfo|null}>()
 
 	let name: string | null = null
 	let highlightingElement: HTMLDivElement

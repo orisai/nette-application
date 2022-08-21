@@ -1,7 +1,14 @@
+interface RenderInfo {
+	className: string
+	file: string
+	name: string
+	templateFile: string
+	templateFileName: string
+}
+
 export interface InspectorComponentItem {
 	classShortName: string
 	depth: number
-	isRenderable: boolean
 	name: string
-	editorLink: string
+	render: { renderTime: number, tree: RenderInfo[] } | null
 }

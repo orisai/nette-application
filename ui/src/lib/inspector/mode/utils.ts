@@ -1,9 +1,7 @@
-interface ComponentInfo {
+export interface ComponentInfo {
 	componentElement: HTMLElement,
 	hoverElement: HTMLElement,
 	name: string,
-	tree: [],
-	renderTime: number,
 }
 
 export function getComponentInfo(element: HTMLElement): ComponentInfo|null
@@ -13,8 +11,8 @@ export function getComponentInfo(element: HTMLElement): ComponentInfo|null
 	let inUnopenedComponent = false
 	let componentElement: HTMLElement | null = null
 
-	const startControlRegExp = new RegExp("\{control (.+) ")
-	const endControlRegExp = new RegExp("\{\/control\}")
+	const startControlRegExp = new RegExp("\{control (.+)\}")
+	const endControlRegExp = new RegExp("\{\/control (.+)\}")
 
 	while (node) {
 		if (node.nodeType === Node.COMMENT_NODE) {
@@ -56,20 +54,17 @@ export function getComponentInfo(element: HTMLElement): ComponentInfo|null
 	}
 
 	// @ts-ignore
-	const splitted = commentNode.textContent.trim().split(" ")
-	const name = splitted[1]
-	const data = JSON.parse(splitted[2].slice(0, -1))
-	const tree = data.tree || []
+	const matchedComment = commentNode.textContent.trim().match(startControlRegExp)
+	// @ts-ignore
+	const name = matchedComment[1]
 
 	if (componentElement === null) {
 		return null
 	}
 
 	return {
-		componentElement: componentElement,
+		componentElement,
 		hoverElement: element,
 		name: name,
-		tree: tree,
-		renderTime: data.renderTime,
 	}
 }

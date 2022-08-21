@@ -6,13 +6,18 @@
 	import InspectMode from "./lib/inspector/mode/InspectMode.svelte";
 	import ThreeDimensionalMode from "./lib/inspector/mode/ThreeDimensionalMode.svelte";
 	import ComponentDetail from "./lib/inspector/ComponentDetail.svelte";
+	import type { ComponentInfo } from './lib/inspector/mode/utils'
 
 	export let componentList: InspectorComponentItem[] = []
 
-	let selectedComponent = null
+	let selectedComponent: InspectorComponentItem | null = null
 
-	function handleSelect (event) {
-		selectedComponent = event.detail
+	function handleSelect (event: Event & { detail: ComponentInfo | null }) {
+		if (event.detail !== null) {
+			selectedComponent = componentList.filter(item => item.name === event.detail?.name)[0] ?? null
+		} else {
+			selectedComponent = null
+		}
 	}
 </script>
 
