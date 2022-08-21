@@ -2,7 +2,7 @@
 	export let timeInSeconds: number
 	export let showText = true
 
-	const timeInMs = (timeInSeconds * 1000).toFixed(4)
+	const timeInMs = Number((timeInSeconds * 1000).toFixed(4))
 	const slowRendered = timeInMs > 0.2
 </script>
 

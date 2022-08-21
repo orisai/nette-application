@@ -1,12 +1,17 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte'
+	import { onDestroy, onMount } from 'svelte'
 	import { mode } from '../store'
 
+	onMount(() => {
+		document.documentElement.classList.add("orisai-Inspector-3dMode")
+	})
+
 	onDestroy(() => {
+		document.documentElement.classList.remove("orisai-Inspector-3dMode")
 		document.body.style.transform = ""
 	})
 
-	function handleMouseMove (event) {
+	function handleMouseMove (event: MouseEvent) {
 		if (event.ctrlKey) {
 			const rotateX = event.pageX;
 			const rotateY = event.pageY;
@@ -27,10 +32,10 @@
 />
 
 <style lang="sass">
-	.tracy-InspectorPanel-3DMode
+	:global(.orisai-Inspector-3dMode)
 		perspective: 1800px
 		transform-style: preserve-3d
 
-	.tracy-InspectorPanel-3DMode body
+	:global(.orisai-Inspector-3dMode body)
 		transform-origin: center center
 </style>

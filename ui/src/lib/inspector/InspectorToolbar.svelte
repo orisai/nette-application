@@ -47,8 +47,3 @@
 </Toolbar>
 
 <svelte:window on:keydown={handleKeyDown} />
-
-<style lang="sass">
-	svg
-		margin-right: 4px
-</style>

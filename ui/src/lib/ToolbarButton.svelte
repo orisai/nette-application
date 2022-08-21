@@ -28,7 +28,7 @@
 			border-color: var(--orisai-color-border-active)
 			z-index: 1
 
-		svg
+		:global(svg)
 			margin-right: 6px
 			flex: 0 0 auto
 

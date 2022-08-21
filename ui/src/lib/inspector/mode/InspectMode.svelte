@@ -89,7 +89,7 @@
 		})
 	}
 
-	function handleKeyUp (event: KeyboardEvent) {
+	function handleKeyUp () {
 		highlightingMode = HighlightingMode.Info
 
 		Object.values(HighlightingMode).forEach((value) => {
@@ -199,8 +199,6 @@
 		--background: hsla(205, 100%, 50%, 0.32)
 
 	:global(.orisai-HighlightingElement--mode-php)
-		--color: #474a8a
-		--background: rgba(71, 74, 138, 0.32)
 		--color: #787cb5
 		--background: rgba(120, 124, 181, 0.32)
 

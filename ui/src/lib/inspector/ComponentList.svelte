@@ -4,14 +4,14 @@
 
 	export let list: InspectorComponentItem[]
 
-	const dispatch = createEventDispatcher()
+	const dispatch = createEventDispatcher<{select: any}>()
 
 	let query: string = ""
 </script>
 
 <input bind:value={query} placeholder="Filter&hellip;" type="search">
 
-<ul class="orisai-tree">
+<ul>
 	{#each list as item}
 		<li on:click={() => dispatch("select", item)} class:orisai-muted={!item.name.toLowerCase().includes(query.toLowerCase())}>
 			{#if !item.isRenderable}
