@@ -77,7 +77,7 @@
 			outline: none
 
 	.orisai-muted
-		opacity: 0.5
+		opacity: 0.32
 
 	.orisai-tag-list
 		display: flex
