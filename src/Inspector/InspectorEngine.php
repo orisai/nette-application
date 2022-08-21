@@ -4,7 +4,6 @@ namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Renderable;
 use ReflectionClass;
 use Tracy\Debugger;
@@ -101,7 +100,7 @@ final class InspectorEngine extends Engine
 		$templateFile = $fileExists ? Helpers::editorUri($file) : '';
 		$templateFileName = $fileExists ? basename($file) : '';
 
-		while ($control !== null && !$control instanceof Presenter) {
+		while ($control !== null) {
 			$name = $control->getName() ?? '_UNATTACHED_';
 
 			if ($control instanceof Renderable) {
