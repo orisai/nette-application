@@ -12,18 +12,27 @@
 
 	let selectedComponent: InspectorComponentItem | null = null
 
+	function findComponent (name: string): InspectorComponentItem | null
+	{
+		return componentList.filter(item => item.name === name)[0] ?? null
+	}
+
 	function handleSelect (event: Event & { detail: ComponentInfo | null }) {
 		if (event.detail !== null) {
-			selectedComponent = componentList.filter(item => item.name === event.detail?.name)[0] ?? null
+			selectedComponent = findComponent(event.detail.name)
 		} else {
 			selectedComponent = null
 		}
+	}
+
+	function handleSelectComponent (event: Event & { detail: InspectorComponentItem }) {
+		selectedComponent = event.detail
 	}
 </script>
 
 <div class="orisai-grid">
 	<div>
-		<ComponentList list={componentList} on:select={handleSelect}/>
+		<ComponentList list={componentList} on:select={handleSelectComponent}/>
 	</div>
 
 	<div>

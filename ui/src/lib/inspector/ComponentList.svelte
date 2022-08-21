@@ -4,7 +4,7 @@
 
 	export let list: InspectorComponentItem[]
 
-	const dispatch = createEventDispatcher<{select: any}>()
+	const dispatch = createEventDispatcher<{select: InspectorComponentItem}>()
 
 	let query: string = ""
 </script>
@@ -13,8 +13,11 @@
 
 <ul>
 	{#each list as item}
-		<li on:click={() => dispatch("select", item)} class:orisai-muted={!item.name.toLowerCase().includes(query.toLowerCase())}>
-			{#if !item.isRenderable}
+		<li
+			on:click={() => dispatch("select", item)}
+			class:orisai-muted={!item.name.toLowerCase().includes(query.toLowerCase())}
+		>
+			{#if item.render !== null}
 				<span>
 					{item.classShortName}
 				</span>
@@ -26,14 +29,14 @@
 
 			{item.name}
 
-			<div class="orisai-tag-list">
-				<a href="{item.editorLink}" class="orisai-tag orisai-tag--php">
-					php
-				</a>
-				<a href="{item.editorLink}" class="orisai-tag orisai-tag--latte">
-					latte
-				</a>
-			</div>
+<!--			<div class="orisai-tag-list">-->
+<!--				<a href="{item.editorLink}" class="orisai-tag orisai-tag&#45;&#45;php">-->
+<!--					php-->
+<!--				</a>-->
+<!--				<a href="{item.editorLink}" class="orisai-tag orisai-tag&#45;&#45;latte">-->
+<!--					latte-->
+<!--				</a>-->
+<!--			</div>-->
 		</li>
 	{/each}
 </ul>
