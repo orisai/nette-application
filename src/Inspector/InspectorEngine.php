@@ -3,7 +3,9 @@
 namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
+use Nette\Application\UI\Component;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Renderable;
 use ReflectionClass;
 use Tracy\Debugger;
@@ -71,13 +73,10 @@ final class InspectorEngine extends Engine
 			'renderTime' => $renderTime,
 		]);
 
-		$name = implode(
-			$control::NAME_SEPARATOR,
-			array_map(static fn (array $item) => $item['name'], $controlTreeInfo),
-		);
-
-		if ($name === '') {
-			$name = '__PRESENTER__';
+		$name = $this->getFullName($control);
+		$pos = strpos($name, $control::NAME_SEPARATOR);
+		if ($pos !== false) {
+			$name = substr($name, $pos + 1);
 		}
 
 		$wrapped = "<!-- {control $name} -->" . PHP_EOL;
@@ -130,6 +129,15 @@ final class InspectorEngine extends Engine
 		}
 
 		return $treeInfo;
+	}
+
+	private function getFullName(Component $component): string
+	{
+		if ($component instanceof Presenter) {
+			return '__PRESENTER__';
+		}
+
+		return $component->lookupPath(Presenter::class) ?? '__UNATTACHED_';
 	}
 
 }
