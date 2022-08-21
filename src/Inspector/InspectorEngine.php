@@ -8,6 +8,7 @@ use Tracy\Debugger;
 use Tracy\Helpers;
 use function basename;
 use function file_exists;
+use function hrtime;
 use const PHP_EOL;
 
 /**
