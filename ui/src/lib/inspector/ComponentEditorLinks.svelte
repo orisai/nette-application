@@ -1,9 +1,9 @@
 <script lang="ts">
     import EditorLinkList from "../EditorLinkList.svelte"
     import EditorLink from "../EditorLink.svelte"
-    import type { InspectorComponentItem } from "./InspectorTypes"
+    import type { InspectorComponent } from "./InspectorTypes"
 
-    export let component: InspectorComponentItem
+    export let component: InspectorComponent
 </script>
 
 <EditorLinkList>

@@ -1,53 +1,39 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte"
+    import { createEventDispatcher } from "svelte"
     import { mode } from "../store"
-    import Portal from "svelte-portal/src/Portal.svelte"
-    import { getComponentInfo } from "./utils"
-    import type { ComponentInfo } from "./utils"
+    import { getComponentDescriptor } from "./utils"
+    import type { ComponentDescriptor } from "./utils"
     import { SelectionMode } from "./utils"
+    import Highlighter from "../Highlighter.svelte"
+    import type { HighlighterRect } from "../InspectorTypes"
 
     const dispatch = createEventDispatcher<{
-        inspect: { component: ComponentInfo | null; selectionMode: SelectionMode }
+        inspect: { componentDescriptor: ComponentDescriptor | null; selectionMode: SelectionMode }
     }>()
 
     let componentName: string | null = null
-    let highlightingElement: HTMLDivElement
     let selectionMode: SelectionMode = SelectionMode.Info
-    let invisible = true
-    let active = false
-
-    onMount(() => {
-        highlightingElement.addEventListener(
-            "transitionend",
-            () => {
-                active = true
-            },
-            {
-                once: true
-            }
-        )
-    })
+    let componentDescriptor: ComponentDescriptor | null = null
+    let rect: HighlighterRect | null = null
+    let invisible = false
 
     function highlightElement(target: HTMLElement, name: string) {
         const domRect = target.getBoundingClientRect()
-
         componentName = name
-
-        highlightingElement.style.transform = `translate3d(${domRect.left}px, ${
-            domRect.top + window.document.documentElement.scrollTop
-        }px, 0)`
-        highlightingElement.style.left = "0px"
-        highlightingElement.style.top = "0px"
-        highlightingElement.style.width = domRect.width + "px"
-        highlightingElement.style.height = domRect.height + "px"
-        invisible = false
+        rect = {
+            x: domRect.left,
+            y: domRect.top + window.document.documentElement.scrollTop,
+            width: domRect.width,
+            height: domRect.height
+        }
     }
 
     function handleMouseMove(event: MouseEvent) {
-        const componentInfo = getComponentInfo(event.target as HTMLElement)
+        componentDescriptor = getComponentDescriptor(event.target as HTMLElement)
 
-        if (componentInfo !== null) {
-            highlightElement(componentInfo.componentElement, componentInfo.name)
+        if (componentDescriptor !== null) {
+            highlightElement(componentDescriptor.rootElement, componentDescriptor.fullName)
+            invisible = false
         } else {
             invisible = true
         }
@@ -57,7 +43,7 @@
         event.preventDefault()
         event.stopImmediatePropagation()
         dispatch("inspect", {
-            component: getComponentInfo(event.target as HTMLElement),
+            componentDescriptor: getComponentDescriptor(event.target as HTMLElement),
             selectionMode
         })
         $mode = null
@@ -92,63 +78,9 @@
     on:keyup={handleKeyUp}
 />
 
-<Portal target={document.body}>
-    <div
-        bind:this={highlightingElement}
-        class="orisai-HighlightingElement"
-        class:orisai-HighlightingElement--invisible={invisible}
-        class:orisai-HighlightingElement--active={active}
-        class:orisai-HighlightingElement--mode-info={selectionMode === SelectionMode.Info}
-        class:orisai-HighlightingElement--mode-php={selectionMode === SelectionMode.PHP}
-        class:orisai-HighlightingElement--mode-latte={selectionMode === SelectionMode.Latte}
-    >
-        <span class="orisai-HighlightingElement-name">
-            {componentName}
-            -
-            {selectionMode}
-        </span>
-    </div>
-</Portal>
-
-<style lang="sass">
-	.orisai-HighlightingElement
-		--color: hsla(205, 100%, 50%, 1)
-		--background: hsla(205, 100%, 50%, 0.32)
-		--on-color: white
-
-		border: 1px solid var(--color)
-		background: var(--background)
-		pointer-events: none
-		position: absolute
-		border-radius: var(--orisai-radius)
-		transition: opacity 0.24s ease
-
-	.orisai-HighlightingElement--active
-		transition-property: all
-		will-change: transform
-		z-index: 19000 // 20000+ ma panel od Tracy
-
-	.orisai-HighlightingElement--invisible
-		opacity: 0
-
-	.orisai-HighlightingElement--mode-info
-		--color: hsla(205, 100%, 50%, 1)
-		--background: hsla(205, 100%, 50%, 0.32)
-
-	.orisai-HighlightingElement--mode-php
-		--color: #787cb5
-		--background: rgba(120, 124, 181, 0.32)
-
-	.orisai-HighlightingElement--mode-latte
-		--color: #F1A443
-		--background: rgba(241, 164, 67, 0.32)
-
-	.orisai-HighlightingElement-name
-		position: absolute
-		padding: 2px 4px
-		background-color: var(--color)
-		color: var(--on-color)
-		border-radius: var(--orisai-radius) 0 var(--orisai-radius) 0
-		font-family: system, sans-serif
-		font-size: 11px
-</style>
+<Highlighter
+    name={componentName || ""}
+    {selectionMode}
+    {rect}
+    invisible={rect === null || invisible}
+/>

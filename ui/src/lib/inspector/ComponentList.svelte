@@ -1,13 +1,15 @@
 <script lang="ts">
-    import type { InspectorComponentItem } from "./InspectorTypes"
+    import type { InspectorComponent } from "./InspectorTypes"
     import { createEventDispatcher } from "svelte"
     import { getComponentViewName } from "./mode/utils.js"
     import ComponentEditorLinks from "./ComponentEditorLinks.svelte"
 
-    export let list: InspectorComponentItem[]
-    export let selectedComponent: InspectorComponentItem | null
+    export let list: InspectorComponent[]
+    export let selectedComponent: InspectorComponent | null
 
-    const dispatch = createEventDispatcher<{ select: InspectorComponentItem }>()
+    const dispatch = createEventDispatcher<{
+        select: InspectorComponent
+    }>()
 
     let query: string = ""
 </script>
@@ -40,6 +42,8 @@
 		border: 1px solid var(--orisai-color-border)
 		border-radius: 0 0 var(--orisai-radius) var(--orisai-radius)
 		overflow: hidden
+		margin: 0
+		padding: 0
 
 	li
 		padding: 4px 4px 4px 8px

@@ -1,9 +1,8 @@
-import type { InspectorComponentItem } from "../InspectorTypes"
+import type { InspectorComponent } from "../InspectorTypes"
 
-export interface ComponentInfo {
-    componentElement: HTMLElement
-    hoverElement: HTMLElement
-    name: string
+export interface ComponentDescriptor {
+    rootElement: HTMLElement
+    fullName: string
 }
 
 export enum SelectionMode {
@@ -12,7 +11,7 @@ export enum SelectionMode {
     Latte = "latte"
 }
 
-export function getComponentViewName(component: InspectorComponentItem): string {
+export function getComponentViewName(component: InspectorComponent): string {
     if (!/^__/.test(component.fullName)) {
         return component.fullName
     } else {
@@ -20,24 +19,29 @@ export function getComponentViewName(component: InspectorComponentItem): string 
     }
 }
 
-export function getComponentInfo(element: HTMLElement): ComponentInfo | null {
+export function getComponentDescriptor(element: HTMLElement): ComponentDescriptor | null {
     let node: Node | null = element
     let commentNode: Node | null = null
     let inUnopenedComponent = false
-    let componentElement: HTMLElement | null = null
+    let rootElement: HTMLElement | null = null
 
-    const startControlRegExp = new RegExp("{control (.+)}")
-    const endControlRegExp = new RegExp("{/control (.+)}")
+    const startComponentRegExp = new RegExp("{control (.+)}")
+    const endComponentRegExp = new RegExp("{/control (.+)}")
 
     while (node) {
         if (node.nodeType === Node.COMMENT_NODE) {
-            // @ts-ignore
-            if (!inUnopenedComponent && endControlRegExp.test(node.textContent.trim())) {
+            if (
+                !inUnopenedComponent &&
+                node.textContent !== null &&
+                endComponentRegExp.test(node.textContent.trim())
+            ) {
                 inUnopenedComponent = true
                 break
             } else {
-                // @ts-ignore
-                if (startControlRegExp.test(node.textContent.trim())) {
+                if (
+                    node.textContent !== null &&
+                    startComponentRegExp.test(node.textContent.trim())
+                ) {
                     if (inUnopenedComponent) {
                         inUnopenedComponent = false
                         break
@@ -49,7 +53,7 @@ export function getComponentInfo(element: HTMLElement): ComponentInfo | null {
             node = null
         } else {
             if (node instanceof HTMLElement) {
-                componentElement = node
+                rootElement = node
             }
 
             if (node.previousSibling) {
@@ -60,35 +64,32 @@ export function getComponentInfo(element: HTMLElement): ComponentInfo | null {
         }
     }
 
-    if (commentNode === null) {
+    if (commentNode === null || commentNode.textContent === null) {
         return null
     }
 
-    // @ts-ignore
-    if (!startControlRegExp.test(commentNode.textContent.trim())) {
+    if (!startComponentRegExp.test(commentNode.textContent.trim())) {
         return null
     }
 
-    // @ts-ignore
-    const matchedComment = commentNode.textContent.trim().match(startControlRegExp)
-    // @ts-ignore
-    const name = matchedComment[1]
+    const matchedComment = commentNode.textContent.trim().match(startComponentRegExp)
 
-    if (componentElement === null) {
+    if (rootElement === null || matchedComment === null) {
         return null
     }
+
+    const fullName = matchedComment[1]
 
     if (
-        componentElement === document.documentElement ||
-        componentElement === document.body ||
-        window.getComputedStyle(componentElement).display === "none"
+        rootElement === document.documentElement ||
+        rootElement === document.body ||
+        window.getComputedStyle(rootElement).display === "none"
     ) {
         return null
     }
 
     return {
-        componentElement,
-        hoverElement: element,
-        name: name
+        rootElement,
+        fullName
     }
 }

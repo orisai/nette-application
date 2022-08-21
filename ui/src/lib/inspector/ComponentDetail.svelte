@@ -1,17 +1,19 @@
 <script lang="ts">
     import RenderTime from "../RenderTime.svelte"
-    import type { InspectorComponentItem } from "./InspectorTypes"
+    import type { InspectorComponent } from "./InspectorTypes"
     import { getComponentViewName } from "./mode/utils.js"
     import ComponentEditorLinks from "./ComponentEditorLinks.svelte"
 
-    export let component: InspectorComponentItem
+    export let component: InspectorComponent
 </script>
 
 <h2>{getComponentViewName(component)}</h2>
 
 <div class="orisai-grid">
     <ComponentEditorLinks {component} />
-    <RenderTime time={component.template.renderTime} />
+    {#if component.template !== null}
+        <RenderTime time={component.template.renderTime} />
+    {/if}
 </div>
 
 {@html component.control.dump}

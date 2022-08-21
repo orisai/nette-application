@@ -1,50 +1,65 @@
 <script lang="ts">
-    import type { InspectorComponentItem } from "./lib/inspector/InspectorTypes"
+    import type { InspectorComponent } from "./lib/inspector/InspectorTypes"
     import ComponentList from "./lib/inspector/ComponentList.svelte"
     import InspectorToolbar from "./lib/inspector/InspectorToolbar.svelte"
     import { InspectorMode, mode } from "./lib/inspector/store"
     import InspectMode from "./lib/inspector/mode/InspectMode.svelte"
     import ThreeDimensionalMode from "./lib/inspector/mode/ThreeDimensionalMode.svelte"
     import ComponentDetail from "./lib/inspector/ComponentDetail.svelte"
-    import type { ComponentInfo } from "./lib/inspector/mode/utils"
+    import type { ComponentDescriptor } from "./lib/inspector/mode/utils"
     import { SelectionMode } from "./lib/inspector/mode/utils"
 
-    export let componentList: InspectorComponentItem[] = []
+    export let componentList: InspectorComponent[] = []
 
-    let selectedComponent: InspectorComponentItem | null = null
+    let selectedComponent: InspectorComponent | null = null
 
-    function findComponent(fullName: string): InspectorComponentItem | null {
-        return componentList.filter((item) => item.fullName === fullName)[0] ?? null
-    }
-
-    function handleSelect(
-        event: Event & { detail: { component: ComponentInfo | null; selectionMode: SelectionMode } }
-    ) {
-        if (event.detail.component !== null) {
-            selectedComponent = findComponent(event.detail.component.name)
-
-            if (selectedComponent !== null) {
-                if (event.detail.selectionMode === SelectionMode.PHP) {
-                    window.location.href = selectedComponent.control.editorUri
-                } else if (event.detail.selectionMode === SelectionMode.Latte) {
-                    if (selectedComponent.template !== null) {
-                        window.location.href = selectedComponent.template.editorUri
-                    }
-                }
+    function handleInspect(
+        event: Event & {
+            detail: {
+                componentDescriptor: ComponentDescriptor | null
+                selectionMode: SelectionMode
             }
-        } else {
+        }
+    ) {
+        const { componentDescriptor, selectionMode } = event.detail
+
+        if (componentDescriptor === null) {
             selectedComponent = null
+            return
+        }
+
+        selectedComponent =
+            componentList.find((item) => item.fullName === componentDescriptor.fullName) || null
+
+        if (selectedComponent === null) {
+            return
+        }
+
+        if (selectionMode === SelectionMode.PHP) {
+            window.location.href = selectedComponent.control.editorUri
+        } else if (selectionMode === SelectionMode.Latte && selectedComponent.template !== null) {
+            window.location.href = selectedComponent.template.editorUri
         }
     }
 
-    function handleSelectComponent(event: Event & { detail: InspectorComponentItem }) {
+    function handleSelect(event: Event & { detail: InspectorComponent }) {
         selectedComponent = event.detail
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+        if (event.ctrlKey && event.metaKey && event.key === "c") {
+            event.preventDefault()
+            event.stopImmediatePropagation()
+            $mode = InspectorMode.Inspect
+        }
     }
 </script>
 
+<svelte:window on:keydown={handleKeyDown} />
+
 <div class="orisai-grid">
     <div>
-        <ComponentList list={componentList} {selectedComponent} on:select={handleSelectComponent} />
+        <ComponentList list={componentList} {selectedComponent} on:select={handleSelect} />
     </div>
 
     <div>
@@ -58,7 +73,7 @@
 </div>
 
 {#if $mode === InspectorMode.Inspect}
-    <InspectMode on:inspect={handleSelect} />
+    <InspectMode on:inspect={handleInspect} />
 {:else if $mode === InspectorMode.ThreeDimensional}
     <ThreeDimensionalMode />
 {/if}
@@ -81,5 +96,4 @@
 			> div
 				flex: 1
 				overflow: auto
-
 </style>
