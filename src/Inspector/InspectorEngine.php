@@ -4,7 +4,6 @@ namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
 use Nette\Application\UI\Control;
-use Tracy\Debugger;
 use Tracy\Helpers;
 use function basename;
 use function file_exists;
@@ -31,9 +30,9 @@ final class InspectorEngine extends Engine
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
 		if ($control instanceof Control) {
-			Debugger::timer();
+			$start = hrtime(true);
 			$output = Helpers::capture(fn () => parent::render($name, $params, $block));
-			$renderTime = Debugger::timer();
+			$renderTime = (hrtime(true) - $start) / 1e+6;
 
 			echo $this->wrapOutput($output, $control, $name, $renderTime);
 
