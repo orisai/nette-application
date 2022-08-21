@@ -56,6 +56,7 @@ final class InspectorExtension extends CompilerExtension
 				$builder->getDefinitionByType(Bar::class),
 				$applicationDefinition,
 				$latteFactoryDefinition,
+				$config->development,
 			],
 		);
 	}
@@ -64,11 +65,12 @@ final class InspectorExtension extends CompilerExtension
 		string $name,
 		Bar $bar,
 		Application $application,
-		LatteFactory $latteFactory
+		LatteFactory $latteFactory,
+		bool $development
 	): void
 	{
 		$bar->addPanel(
-			new InspectorPanel($application, $latteFactory),
+			new InspectorPanel($application, $latteFactory, $development),
 			$name,
 		);
 	}

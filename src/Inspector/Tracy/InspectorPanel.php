@@ -21,10 +21,13 @@ final class InspectorPanel implements IBarPanel
 
 	private Engine $engine;
 
-	public function __construct(Application $application, LatteFactory $latteFactory)
+	private bool $development;
+
+	public function __construct(Application $application, LatteFactory $latteFactory, bool $development)
 	{
 		$this->application = $application;
 		$this->engine = $latteFactory->create();
+		$this->development = $development;
 	}
 
 	public function getTab(): string
@@ -47,17 +50,15 @@ final class InspectorPanel implements IBarPanel
 		$componentList = [];
 		$this->buildComponentList($componentList, $presenter);
 
-		$development = true; // @todo sem poslat nastaveni z NEONu
-
 		return $this->engine->renderToString(
 			__DIR__ . '/Inspector.panel.latte',
 			[
-				'development' => $development,
+				'development' => $this->development,
 				'props' => json_encode([
 					'componentList' => $componentList,
 				]),
-				'scriptCode' => !$development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.js') : null,
-				'styleCode' => !$development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.css') : null,
+				'scriptCode' => !$this->development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.js') : null,
+				'styleCode' => !$this->development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.css') : null,
 			],
 		);
 	}
