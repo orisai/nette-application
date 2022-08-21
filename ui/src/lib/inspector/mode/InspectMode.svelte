@@ -4,14 +4,9 @@
 	import Portal from "svelte-portal/src/Portal.svelte"
 	import { getComponentInfo } from './utils'
 	import type { ComponentInfo } from './utils'
+	import { SelectionMode } from './utils'
 
-	enum SelectionMode {
-		Info = "info",
-		PHP = "php",
-		Latte = "latte"
-	}
-
-	const dispatch = createEventDispatcher<{inspect: ComponentInfo|null}>()
+	const dispatch = createEventDispatcher<{inspect: { component: ComponentInfo|null, selectionMode: SelectionMode }}>()
 
 	let componentName: string | null = null
 	let highlightingElement: HTMLDivElement
@@ -54,7 +49,7 @@
 	function handleClick(event: MouseEvent) {
 		event.preventDefault()
 		event.stopImmediatePropagation()
-		dispatch("inspect", getComponentInfo(event.target as HTMLElement))
+		dispatch("inspect", {component: getComponentInfo(event.target as HTMLElement), selectionMode} )
 		$mode = null
 	}
 

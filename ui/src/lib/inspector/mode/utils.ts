@@ -6,6 +6,12 @@ export interface ComponentInfo {
 	name: string,
 }
 
+export enum SelectionMode {
+	Info = "info",
+	PHP = "php",
+	Latte = "latte"
+}
+
 export function getComponentViewName (component: InspectorComponentItem): string
 {
 	if (!/^__/.test(component.fullName)) {

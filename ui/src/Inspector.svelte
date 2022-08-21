@@ -7,6 +7,7 @@
 	import ThreeDimensionalMode from "./lib/inspector/mode/ThreeDimensionalMode.svelte";
 	import ComponentDetail from "./lib/inspector/ComponentDetail.svelte";
 	import type { ComponentInfo } from './lib/inspector/mode/utils'
+	import { SelectionMode } from './lib/inspector/mode/utils'
 
 	export let componentList: InspectorComponentItem[] = []
 
@@ -17,9 +18,19 @@
 		return componentList.filter(item => item.fullName === fullName)[0] ?? null
 	}
 
-	function handleSelect (event: Event & { detail: ComponentInfo | null }) {
-		if (event.detail !== null) {
-			selectedComponent = findComponent(event.detail.name)
+	function handleSelect (event: Event & { detail: { component: ComponentInfo | null, selectionMode: SelectionMode } }) {
+		if (event.detail.component !== null) {
+			selectedComponent = findComponent(event.detail.component.name)
+
+			if (selectedComponent !== null) {
+				if (event.detail.selectionMode === SelectionMode.PHP) {
+					window.location.href = selectedComponent.control.editorUri
+				} else if (event.detail.selectionMode === SelectionMode.Latte) {
+					if (selectedComponent.template !== null) {
+						window.location.href = selectedComponent.template.editorUri
+					}
+				}
+			}
 		} else {
 			selectedComponent = null
 		}
