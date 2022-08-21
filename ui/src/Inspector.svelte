@@ -38,7 +38,9 @@
 	<div>
 		<InspectorToolbar/>
 		{#if selectedComponent !== null}
-			<ComponentDetail component={selectedComponent}/>
+			<div>
+				<ComponentDetail component={selectedComponent}/>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -55,7 +57,17 @@
 		grid-template-columns: auto 1fr
 		column-gap: 24px
 
-	.orisai-grid > div
-		width: auto
-		overflow: auto
+		> div
+			width: auto
+			overflow: auto
+
+		> div:nth-child(2)
+			display: flex
+			flex-direction: column
+			gap: 12px
+
+			> div
+				flex: 1
+				overflow: auto
+
 </style>

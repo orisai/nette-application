@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte'
+	import { createEventDispatcher, onMount } from 'svelte'
 	import { mode } from '../store'
 	import Portal from "svelte-portal/src/Portal.svelte"
 	import { getComponentInfo } from './utils'
 	import type { ComponentInfo } from './utils'
 
-	enum HighlightingMode {
+	enum SelectionMode {
 		Info = "info",
 		PHP = "php",
 		Latte = "latte"
@@ -13,28 +13,32 @@
 
 	const dispatch = createEventDispatcher<{inspect: ComponentInfo|null}>()
 
-	let name: string | null = null
+	let componentName: string | null = null
 	let highlightingElement: HTMLDivElement
-	let highlightingMode: HighlightingMode = HighlightingMode.Info
+	let selectionMode: SelectionMode = SelectionMode.Info
+	let invisible = true
+	let active = false
 
-	function highlightElement(target: HTMLElement, n: string)
+	onMount(() => {
+		highlightingElement.addEventListener("transitionend", () => {
+			active = true
+		}, {
+			once: true
+		})
+	})
+
+	function highlightElement(target: HTMLElement, name: string)
 	{
 		const domRect = target.getBoundingClientRect()
 
-		name = n
+		componentName = name
 
 		highlightingElement.style.transform = `translate3d(${domRect.left}px, ${domRect.top + window.document.documentElement.scrollTop}px, 0)`
 		highlightingElement.style.left = "0px"
 		highlightingElement.style.top = "0px"
 		highlightingElement.style.width = domRect.width + "px"
 		highlightingElement.style.height = domRect.height + "px"
-		highlightingElement.classList.remove("orisai-HighlightingElement--invisible")
-
-		highlightingElement.addEventListener("transitionend", () => {
-			highlightingElement.classList.add("orisai-HighlightingElement--active")
-		}, {
-			once: true
-		})
+		invisible = false
 	}
 
 	function handleMouseMove (event: MouseEvent) {
@@ -42,8 +46,8 @@
 
 		if (componentInfo !== null) {
 			highlightElement(componentInfo.componentElement, componentInfo.name)
-		} else if (highlightingElement) {
-			highlightingElement.classList.add("orisai-HighlightingElement--invisible")
+		} else {
+			invisible = true
 		}
 	}
 
@@ -59,19 +63,20 @@
 			event.preventDefault()
 			event.stopImmediatePropagation()
 			$mode = null
+			return
 		}
 
 		if (event.metaKey || event.ctrlKey) {
-			highlightingMode = HighlightingMode.PHP
+			selectionMode = SelectionMode.PHP
 		} else if (event.shiftKey) {
-			highlightingMode = HighlightingMode.Latte
+			selectionMode = SelectionMode.Latte
 		} else {
-			highlightingMode = HighlightingMode.Info
+			selectionMode = SelectionMode.Info
 		}
 	}
 
 	function handleKeyUp () {
-		highlightingMode = HighlightingMode.Info
+		selectionMode = SelectionMode.Info
 	}
 </script>
 
@@ -85,14 +90,16 @@
 <Portal target={document.body}>
 	<div bind:this={highlightingElement}
 		 class="orisai-HighlightingElement"
-		 class:orisai-HighlightingElement--mode-info={highlightingMode === HighlightingMode.Info}
-		 class:orisai-HighlightingElement--mode-php={highlightingMode === HighlightingMode.PHP}
-		 class:orisai-HighlightingElement--mode-latte={highlightingMode === HighlightingMode.Latte}
+		 class:orisai-HighlightingElement--invisible={invisible}
+		 class:orisai-HighlightingElement--active={active}
+		 class:orisai-HighlightingElement--mode-info={selectionMode === SelectionMode.Info}
+		 class:orisai-HighlightingElement--mode-php={selectionMode === SelectionMode.PHP}
+		 class:orisai-HighlightingElement--mode-latte={selectionMode === SelectionMode.Latte}
 	>
 		<span class="orisai-HighlightingElement-name">
-			{name}
+			{componentName}
 			-
-			{highlightingMode}
+			{selectionMode}
 		</span>
 	</div>
 </Portal>
@@ -113,7 +120,7 @@
 	.orisai-HighlightingElement--active
 		transition-property: all
 		will-change: transform
-		z-index: 20227 /* 20228 ma panel od Tracy */
+		z-index: 19000 // 20000+ ma panel od Tracy
 
 	.orisai-HighlightingElement--invisible
 		opacity: 0

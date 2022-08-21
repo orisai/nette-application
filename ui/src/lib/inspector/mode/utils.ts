@@ -1,7 +1,18 @@
+import type { InspectorComponentItem } from '../InspectorTypes'
+
 export interface ComponentInfo {
 	componentElement: HTMLElement,
 	hoverElement: HTMLElement,
 	name: string,
+}
+
+export function getComponentViewName (component: InspectorComponentItem): string
+{
+	if (!/^__/.test(component.fullName)) {
+		return component.fullName
+	} else {
+		return component.control.shortName
+	}
 }
 
 export function getComponentInfo(element: HTMLElement): ComponentInfo|null
@@ -59,6 +70,13 @@ export function getComponentInfo(element: HTMLElement): ComponentInfo|null
 	const name = matchedComment[1]
 
 	if (componentElement === null) {
+		return null
+	}
+
+	if (componentElement === document.documentElement
+		|| componentElement === document.body
+		|| window.getComputedStyle(componentElement).display === "none")
+	{
 		return null
 	}
 

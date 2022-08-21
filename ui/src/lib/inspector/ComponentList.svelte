@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { InspectorComponentItem } from './InspectorTypes'
 	import { createEventDispatcher} from 'svelte'
+	import { getComponentViewName } from "./mode/utils.js";
+	import ComponentEditorLinks from "./ComponentEditorLinks.svelte";
 
 	export let list: InspectorComponentItem[]
 	export let selectedComponent: InspectorComponentItem | null
@@ -8,47 +10,28 @@
 	const dispatch = createEventDispatcher<{select: InspectorComponentItem}>()
 
 	let query: string = ""
-
-	function showFullName (name): boolean
-	{
-		return !/^__/.test(name)
-	}
 </script>
 
 <input bind:value={query} placeholder="Filter&hellip;" type="search">
 
 <ul>
-	{#each list as item}
+	{#each list as component}
 		<li
-			on:click={() => dispatch("select", item)}
+			on:click={() => dispatch("select", component)}
 			class:orisai-muted={
-				!item.fullName.toLowerCase().includes(query.toLowerCase())
-				&& !item.control.shortName.toLowerCase().includes(query.toLowerCase())
+				!component.fullName.toLowerCase().includes(query.toLowerCase())
+				&& !component.control.shortName.toLowerCase().includes(query.toLowerCase())
 			}
-			class:orisai-active={selectedComponent === item}
+			class:orisai-active={selectedComponent === component}
 		>
-			{#if item.depth > 0}
-				<span style="margin-left: {item.depth * 2}ex"></span>└ 
+			{#if component.depth > 0}
+				<span style="margin-left: {component.depth * 2}ex"></span>└ 
 			{/if}
 
-			<b>
-				{item.control.shortName}
-			</b>
+			{getComponentViewName(component)}
 
-			{#if showFullName(item.fullName)}
-				&nbsp;
-				({item.fullName})
-			{/if}
-
-			<div class="orisai-tag-list">
-				<a href="{item.control.editorUri}" class="orisai-tag orisai-tag--php">
-					php
-				</a>
-				{#if item.template !== null}
-					<a href="{item.template.editorUri}" class="orisai-tag orisai-tag--latte">
-						latte
-					</a>
-				{/if}
+			<div class="orisai-editor-links">
+				<ComponentEditorLinks {component} />
 			</div>
 		</li>
 	{/each}
@@ -70,7 +53,7 @@
 		transition: background-color 0.16s ease, opacity 0.2s ease
 
 		&:hover
-			.orisai-tag-list
+			.orisai-editor-links
 				visibility: visible
 
 		&:not(:first-child)
@@ -80,6 +63,10 @@
 	.orisai-active
 		background-color: #f5f4f2
 		color: var(--orisai-color-active)
+
+	.orisai-active,
+	.orisai-active:hover
+		color: black
 
 	input
 		display: block
@@ -97,37 +84,8 @@
 	.orisai-muted
 		opacity: 0.32
 
-	.orisai-tag-list
-		display: flex
-		align-items: center
+	.orisai-editor-links
 		margin-left: auto
-		gap: 4px
 		visibility: hidden
 		padding-left: 16px
-
-	.orisai-tag
-		display: flex
-		align-items: center
-		border-radius: 48px
-		padding: 0 6px
-		font-size: 8px
-		font-style: italic
-		font-weight: bold
-		height: 16px
-
-		&--php
-			background-color: #b0b3d6
-			color: #fff !important
-
-			&:hover,
-			&:focus-visible
-				background-color: #787cb5 !important
-
-		&--latte
-			background-color: #ffbe6c
-			color: #fff !important
-
-			&:hover,
-			&:focus-visible
-				background-color: #F1A443 !important
 </style>
