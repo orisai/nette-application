@@ -10,6 +10,7 @@ use Nette\Application\UI\Renderable;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use ReflectionClass;
 use stdClass;
+use Tracy\Helpers;
 use Tracy\IBarPanel;
 use function file_get_contents;
 
@@ -49,8 +50,9 @@ final class InspectorPanel implements IBarPanel
 		return $this->engine->renderToString(
 			__DIR__ . '/Inspector.panel.latte',
 			[
-				'scriptCode' => file_get_contents(__DIR__ . '/inspector.js'),
-				'componentList' => $componentList,
+				'props' => json_encode([
+					'componentList' => $componentList,
+				])
 			],
 		);
 	}
@@ -60,11 +62,14 @@ final class InspectorPanel implements IBarPanel
 	 */
 	private function buildComponentList(array &$componentList, Component $component, int $depth = 0): void
 	{
+		$reflection = new ReflectionClass($component);
+
 		$componentList[] = (object) [
 			'name' => $component->getName(),
 			'depth' => $depth,
 			'isRenderable' => $component instanceof Renderable,
 			'classShortName' => (new ReflectionClass($component))->getShortName(),
+			'editorLink' => Helpers::editorUri($reflection->getFileName()),
 		];
 
 		$subDepth = $depth + 1;
