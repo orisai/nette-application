@@ -77,9 +77,13 @@ final class InspectorEngine extends Engine
 			array_map(static fn (array $item) => $item['name'], $controlTreeInfo),
 		);
 
+		if ($name === '') {
+			$name = '__PRESENTER__';
+		}
+
 		$wrapped = "<!-- {control $name} -->" . PHP_EOL;
 		$wrapped .= $output;
-		$wrapped .= '<!-- {/control} -->' . PHP_EOL;
+		$wrapped .= "<!-- {/control $name} -->" . PHP_EOL;
 
 		return $wrapped;
 	}
