@@ -1,18 +1,31 @@
+{varType bool $development}
+{varType array $props}
+{varType string|null $styleCode}
+{varType string|null $scriptCode}
+
 <h1>Inspector</h1>
 <div class="tracy-inner" id="orisai-inspector" data-props="{$props}"></div>
 
-<script>
-	// @todo tady je potřeba načítat zbuilděný soubor a nebo...
+{if $development}
+	<script>
+		const baseUrl = "http://localhost:5173"
 
-	const baseUrl = "http://localhost:5173"
+		const viteClientScript = document.createElement("script")
+		viteClientScript.src = `${ baseUrl }/@vite/client`
+		viteClientScript.type = "module"
 
-	const viteClientScript = document.createElement("script")
-	viteClientScript.src = `${ baseUrl }/@vite/client`
-	viteClientScript.type = "module"
+		const mainScript = document.createElement("script")
+		mainScript.src = `${ baseUrl }/src/main.ts`
+		mainScript.type = "module"
 
-	const mainScript = document.createElement("script")
-	mainScript.src = `${ baseUrl }/src/main.ts`
-	mainScript.type = "module"
+		document.head.append(viteClientScript, mainScript)
+	</script>
+{elseif $styleCode !== null && $scriptCode !== null}
+	<style>
+		{$styleCode|noescape}
+	</style>
 
-	document.head.append(viteClientScript, mainScript)
-</script>
+	<script>
+		{$scriptCode|noescape}
+	</script>
+{/if}

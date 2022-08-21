@@ -24,6 +24,7 @@ final class InspectorExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
+			'development' => Expect::bool(false),
 			'enabled' => Expect::bool(false),
 		]);
 	}

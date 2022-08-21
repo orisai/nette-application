@@ -47,12 +47,17 @@ final class InspectorPanel implements IBarPanel
 		$componentList = [];
 		$this->buildComponentList($componentList, $presenter);
 
+		$development = true; // @todo sem poslat nastaveni z NEONu
+
 		return $this->engine->renderToString(
 			__DIR__ . '/Inspector.panel.latte',
 			[
+				'development' => $development,
 				'props' => json_encode([
 					'componentList' => $componentList,
-				])
+				]),
+				'scriptCode' => !$development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.js') : null,
+				'styleCode' => !$development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.css') : null,
 			],
 		);
 	}
