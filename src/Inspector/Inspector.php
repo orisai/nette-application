@@ -13,6 +13,9 @@ use function assert;
 use function is_string;
 use function spl_object_id;
 
+/**
+ * @internal
+ */
 final class Inspector
 {
 

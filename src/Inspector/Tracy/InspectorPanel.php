@@ -11,6 +11,9 @@ use OriNette\Application\Inspector\Inspector;
 use Tracy\IBarPanel;
 use function file_get_contents;
 
+/**
+ * @internal
+ */
 final class InspectorPanel implements IBarPanel
 {
 

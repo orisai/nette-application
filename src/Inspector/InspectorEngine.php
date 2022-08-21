@@ -10,6 +10,9 @@ use function basename;
 use function file_exists;
 use const PHP_EOL;
 
+/**
+ * @internal
+ */
 final class InspectorEngine extends Engine
 {
 
