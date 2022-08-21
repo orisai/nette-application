@@ -58,7 +58,7 @@ final class InspectorEngine extends Engine
 
 	private function wrapOutput(string $output, Control $control, string $file, float $renderTime): string
 	{
-		$info = $this->getTemplateInfo($file, $renderTime);
+		$info = $this->getTemplateData($file, $renderTime);
 		$this->inspector->addTemplateData($control, $info);
 
 		$fullName = $this->inspector->getFullName($control);
@@ -71,9 +71,9 @@ final class InspectorEngine extends Engine
 	}
 
 	/**
-	 * @return array<mixed>
+	 * @return array{shortName: string|null, fullName: string, editorUri: string|null, renderTime: float}
 	 */
-	private function getTemplateInfo(string $file, float $renderTime): array
+	private function getTemplateData(string $file, float $renderTime): array
 	{
 		if (file_exists($file)) {
 			$editorUri = Helpers::editorUri($file);
