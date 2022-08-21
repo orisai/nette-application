@@ -6,7 +6,6 @@ use Latte\Engine;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Renderable;
-use Nette\Utils\Json;
 use ReflectionClass;
 use Tracy\Debugger;
 use Tracy\Helpers;
@@ -21,6 +20,13 @@ use const PHP_EOL;
 
 final class InspectorEngine extends Engine
 {
+
+	private InspectorDataStorage $storage;
+
+	public function setDataStorage(InspectorDataStorage $storage): void
+	{
+		$this->storage = $storage;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -61,7 +67,7 @@ final class InspectorEngine extends Engine
 	private function wrapOutput(string $output, Control $control, string $file, float $renderTime): string
 	{
 		$controlTreeInfo = $this->getControlTreeInfo($control, $file);
-		$data = Json::encode([
+		$this->storage->add($control, [
 			'tree' => $controlTreeInfo,
 			'renderTime' => $renderTime,
 		]);
@@ -71,9 +77,9 @@ final class InspectorEngine extends Engine
 			array_map(static fn (array $item) => $item['name'], $controlTreeInfo),
 		);
 
-		$wrapped = "<!-- {control {$name} {$data}} -->" . PHP_EOL;
+		$wrapped = "<!-- {control $name} -->" . PHP_EOL;
 		$wrapped .= $output;
-		$wrapped .= '<!-- {/control} -->';
+		$wrapped .= '<!-- {/control} -->' . PHP_EOL;
 
 		return $wrapped;
 	}

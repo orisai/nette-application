@@ -5,14 +5,16 @@ namespace OriNette\Application\Inspector\Tracy;
 use Latte\Engine;
 use Nette\Application\Application;
 use Nette\Application\UI\Component;
+use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
-use Nette\Application\UI\Renderable;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
+use OriNette\Application\Inspector\InspectorDataStorage;
 use ReflectionClass;
 use stdClass;
 use Tracy\Helpers;
 use Tracy\IBarPanel;
 use function file_get_contents;
+use function json_encode;
 
 final class InspectorPanel implements IBarPanel
 {
@@ -21,12 +23,20 @@ final class InspectorPanel implements IBarPanel
 
 	private Engine $engine;
 
+	private InspectorDataStorage $storage;
+
 	private bool $development;
 
-	public function __construct(Application $application, LatteFactory $latteFactory, bool $development)
+	public function __construct(
+		Application $application,
+		LatteFactory $latteFactory,
+		InspectorDataStorage $storage,
+		bool $development
+	)
 	{
 		$this->application = $application;
 		$this->engine = $latteFactory->create();
+		$this->storage = $storage;
 		$this->development = $development;
 	}
 
@@ -57,8 +67,12 @@ final class InspectorPanel implements IBarPanel
 				'props' => json_encode([
 					'componentList' => $componentList,
 				]),
-				'scriptCode' => !$this->development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.js') : null,
-				'styleCode' => !$this->development ? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.css') : null,
+				'scriptCode' => !$this->development
+					? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.js')
+					: null,
+				'styleCode' => !$this->development
+					? file_get_contents(__DIR__ . '/../../../ui/dist/assets/main.css')
+					: null,
 			],
 		);
 	}
@@ -73,7 +87,7 @@ final class InspectorPanel implements IBarPanel
 		$componentList[] = (object) [
 			'name' => $component->getName(),
 			'depth' => $depth,
-			'isRenderable' => $component instanceof Renderable,
+			'render' => $component instanceof Control ? $this->storage->get($component) : null,
 			'classShortName' => (new ReflectionClass($component))->getShortName(),
 			'editorLink' => Helpers::editorUri($reflection->getFileName()),
 		];
