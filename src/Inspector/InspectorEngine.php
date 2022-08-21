@@ -3,30 +3,21 @@
 namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
-use Nette\Application\UI\Component;
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Presenter;
-use Nette\Application\UI\Renderable;
-use ReflectionClass;
 use Tracy\Debugger;
 use Tracy\Helpers;
-use function array_map;
-use function array_unshift;
-use function assert;
 use function basename;
 use function file_exists;
-use function implode;
-use function is_string;
 use const PHP_EOL;
 
 final class InspectorEngine extends Engine
 {
 
-	private InspectorDataStorage $storage;
+	private Inspector $inspector;
 
-	public function setDataStorage(InspectorDataStorage $storage): void
+	public function setInspector(Inspector $inspector): void
 	{
-		$this->storage = $storage;
+		$this->inspector = $inspector;
 	}
 
 	/**
@@ -68,9 +59,9 @@ final class InspectorEngine extends Engine
 	private function wrapOutput(string $output, Control $control, string $file, float $renderTime): string
 	{
 		$info = $this->getTemplateInfo($file, $renderTime);
-		$this->storage->add($control, $info);
+		$this->inspector->addTemplateData($control, $info);
 
-		$fullName = $this->getFullName($control);
+		$fullName = $this->inspector->getFullName($control);
 
 		$wrapped = "<!-- {control $fullName} -->" . PHP_EOL;
 		$wrapped .= $output;
@@ -98,16 +89,6 @@ final class InspectorEngine extends Engine
 			'editorUri' => $editorUri,
 			'renderTime' => $renderTime,
 		];
-	}
-
-	private function getFullName(Component $component): string
-	{
-		if ($component instanceof Presenter) {
-			return '__PRESENTER__';
-		}
-
-		return $component->lookupPath(Presenter::class, false)
-			?? '__UNATTACHED_' . spl_object_id($component);
 	}
 
 }

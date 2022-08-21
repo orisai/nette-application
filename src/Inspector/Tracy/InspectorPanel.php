@@ -8,12 +8,14 @@ use Nette\Application\UI\Component;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
-use OriNette\Application\Inspector\InspectorDataStorage;
+use OriNette\Application\Inspector\Inspector;
 use ReflectionClass;
 use stdClass;
 use Tracy\Helpers;
 use Tracy\IBarPanel;
+use function assert;
 use function file_get_contents;
+use function is_string;
 use function json_encode;
 
 final class InspectorPanel implements IBarPanel
@@ -23,20 +25,20 @@ final class InspectorPanel implements IBarPanel
 
 	private Engine $engine;
 
-	private InspectorDataStorage $storage;
+	private Inspector $inspector;
 
 	private bool $development;
 
 	public function __construct(
 		Application $application,
 		LatteFactory $latteFactory,
-		InspectorDataStorage $storage,
+		Inspector $inspector,
 		bool $development
 	)
 	{
 		$this->application = $application;
 		$this->engine = $latteFactory->create();
-		$this->storage = $storage;
+		$this->inspector = $inspector;
 		$this->development = $development;
 	}
 
@@ -82,13 +84,13 @@ final class InspectorPanel implements IBarPanel
 	 */
 	private function buildComponentList(array &$componentList, Component $component, int $depth = 0): void
 	{
-		$fullName = $this->getFullName($component);
+		$fullName = $this->inspector->getFullName($component);
 
-		$componentList[$fullName] = (object) [
+		$componentList[] = (object) [
 			'fullName' => $fullName,
 			'depth' => $depth,
 			'control' => $this->getControlInfo($component),
-			'template' => $component instanceof Control ? $this->storage->get($component) : null,
+			'template' => $component instanceof Control ? $this->inspector->getTemplateData($component) : null,
 		];
 
 		$subDepth = $depth + 1;
@@ -99,6 +101,9 @@ final class InspectorPanel implements IBarPanel
 		}
 	}
 
+	/**
+	 * @return array<mixed>
+	 */
 	private function getControlInfo(Component $component): array
 	{
 		$reflection = new ReflectionClass($component);
@@ -110,16 +115,6 @@ final class InspectorPanel implements IBarPanel
 			'fullName' => $reflection->getName(),
 			'editorUri' => Helpers::editorUri($fileName),
 		];
-	}
-
-	private function getFullName(Component $component): string
-	{
-		if ($component instanceof Presenter) {
-			return '__PRESENTER__';
-		}
-
-		return $component->lookupPath(Presenter::class, false)
-			?? '__UNATTACHED_' . spl_object_id($component);
 	}
 
 }
