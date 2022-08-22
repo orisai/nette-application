@@ -1,7 +1,7 @@
 <script lang="ts">
     import Toolbar from "../Toolbar.svelte"
     import ToolbarButton from "../ToolbarButton.svelte"
-    import { InspectorMode, mode } from "./store"
+    import { InspectorMode, mode, showHelp } from "./store"
 </script>
 
 <Toolbar>
@@ -27,6 +27,8 @@
         </svg>
         Inspect
     </ToolbarButton>
+
+    <ToolbarButton on:click={() => ($showHelp = !$showHelp)} active={$showHelp}>Help</ToolbarButton>
 
     <!--	<ToolbarButton on:click={() => $mode = InspectorMode.ThreeDimensional} active={$mode === InspectorMode.ThreeDimensional}>-->
     <!--		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">-->

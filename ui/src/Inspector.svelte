@@ -8,6 +8,8 @@
     import ComponentDetail from "./lib/inspector/ComponentDetail.svelte"
     import type { ComponentDescriptor } from "./lib/inspector/mode/utils"
     import { SelectionMode } from "./lib/inspector/mode/utils"
+	import { showHelp } from "./lib/inspector/store.js";
+	import Key from "./lib/Key.svelte";
 
     export let componentList: InspectorComponent[] = []
 
@@ -64,10 +66,24 @@
 
     <div>
         <InspectorToolbar />
-        {#if selectedComponent !== null}
-            <div>
-                <ComponentDetail component={selectedComponent} />
-            </div>
+		{#if $showHelp}
+			<p>
+				Inspect element on the page by click <b>Inspect</b> button or
+				<Key key="⌘"/> <Key key="ctrl"/> <Key key="c"/>
+			</p>
+			<p>
+				For quickly open:
+			</p>
+			<ul>
+				<li><b>PHP class of component</b> - hold <Key key="⌘"/> while inspecting,</li>
+				<li><b>Latte template</b> - hold <Key key="⇧"/> while inspecting.</li>
+			</ul>
+		{:else}
+			{#if selectedComponent !== null}
+				<div>
+					<ComponentDetail component={selectedComponent} />
+				</div>
+			{/if}
         {/if}
     </div>
 </div>
