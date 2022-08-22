@@ -13,7 +13,7 @@ export enum SelectionMode {
 
 export function getComponentViewName(component: InspectorComponent): string {
     if (!/^__/.test(component.fullName)) {
-        return component.fullName
+        return component.shortName
     } else {
         return component.control.shortName
     }

@@ -71,6 +71,7 @@ final class Inspector
 
 		$componentList[] = (object) [
 			'fullName' => $fullName,
+			'shortName' => $component->getName(),
 			'depth' => $depth,
 			'control' => $this->getControlData($component),
 			'template' => $component instanceof Control ? $this->getTemplateData($component) : null,
