@@ -86,10 +86,8 @@ final class Inspector
 			$parentId = $form->getElementPrototype()->id;
 		}
 
-		$controlData = null;
 		$templateData = null;
 		if ($component instanceof Control) {
-			$controlData = $this->getControlData($component);
 			$templateData = $this->getTemplateData($component);
 		}
 
@@ -100,7 +98,7 @@ final class Inspector
 			'depth' => $depth,
 			'id' => $id,
 			'parentId' => $parentId,
-			'control' => $controlData,
+			'control' => $this->getControlData($component),
 			'template' => $templateData,
 		];
 

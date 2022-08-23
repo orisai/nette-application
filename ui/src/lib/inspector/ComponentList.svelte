@@ -18,7 +18,7 @@
 
 <ul>
     {#each list as component}
-		{#if component.control !== null}
+		{#if component.control !== null && component.showInTree}
 			<li
 				on:click={() => dispatch("select", component)}
 				class:orisai-muted={!component.fullName.toLowerCase().includes(query.toLowerCase()) &&
