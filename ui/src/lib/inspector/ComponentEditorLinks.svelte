@@ -7,7 +7,9 @@
 </script>
 
 <EditorLinkList>
-    <EditorLink uri={component.control.editorUri} type="php" />
+	{#if component.control !== null}
+    	<EditorLink uri={component.control.editorUri} type="php" />
+	{/if}
     {#if component.template !== null}
         <EditorLink uri={component.template.editorUri} type="latte" />
     {/if}

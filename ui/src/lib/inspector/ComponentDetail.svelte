@@ -16,7 +16,9 @@
     {/if}
 </div>
 
-{@html component.control.dump}
+{#if component.control !== null}
+	{@html component.control.dump}
+{/if}
 
 <style lang="sass">
 	h2

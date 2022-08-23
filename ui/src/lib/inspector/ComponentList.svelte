@@ -18,22 +18,24 @@
 
 <ul>
     {#each list as component}
-        <li
-            on:click={() => dispatch("select", component)}
-            class:orisai-muted={!component.fullName.toLowerCase().includes(query.toLowerCase()) &&
-                !component.control.shortName.toLowerCase().includes(query.toLowerCase())}
-            class:orisai-active={selectedComponent === component}
-        >
-            {#if component.depth > 0}
-                <span style="margin-left: {component.depth * 2}ex" />└
-            {/if}
+		{#if component.control !== null}
+			<li
+				on:click={() => dispatch("select", component)}
+				class:orisai-muted={!component.fullName.toLowerCase().includes(query.toLowerCase()) &&
+					!component.control.shortName.toLowerCase().includes(query.toLowerCase())}
+				class:orisai-active={selectedComponent === component}
+			>
+				{#if component.depth > 0}
+					<span style="margin-left: {component.depth * 2}ex" />└
+				{/if}
 
-            {getComponentViewName(component)}
+				{getComponentViewName(component)}
 
-            <div class="orisai-editor-links">
-                <ComponentEditorLinks {component} />
-            </div>
-        </li>
+				<div class="orisai-editor-links">
+					<ComponentEditorLinks {component} />
+				</div>
+			</li>
+		{/if}
     {/each}
 </ul>
 

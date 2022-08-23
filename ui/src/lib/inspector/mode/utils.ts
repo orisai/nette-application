@@ -14,9 +14,17 @@ export enum SelectionMode {
 export function getComponentViewName(component: InspectorComponent): string {
     if (!/^__/.test(component.fullName)) {
         return component.shortName
-    } else {
+    }
+
+	if (component.control !== null) {
         return component.control.shortName
     }
+
+	if (component.id !== null) {
+		return component.id;
+	}
+
+	throw new Error('Should not happen');
 }
 
 export function getComponentDescriptor(element: HTMLElement): ComponentDescriptor | null {

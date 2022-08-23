@@ -37,7 +37,7 @@
             return
         }
 
-        if (selectionMode === SelectionMode.PHP) {
+        if (selectionMode === SelectionMode.PHP && selectedComponent.control !== null) {
             window.location.href = selectedComponent.control.editorUri
         } else if (selectionMode === SelectionMode.Latte && selectedComponent.template !== null) {
             window.location.href = selectedComponent.template.editorUri

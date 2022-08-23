@@ -2,9 +2,12 @@
 
 namespace OriNette\Application\Inspector;
 
-use Nette\Application\UI\Component;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
+use Nette\ComponentModel\Component;
+use Nette\ComponentModel\IContainer;
+use Nette\Forms\Controls\BaseControl;
+use Nette\Forms\Form;
 use ReflectionClass;
 use stdClass;
 use Tracy\Dumper;
@@ -68,18 +71,46 @@ final class Inspector
 	private function buildComponentListInternal(array &$componentList, Component $component, int $depth = 0): void
 	{
 		$fullName = $this->getFullName($component);
+		$showInTree = true;
+
+		$id = null;
+		$parentId = null;
+		if ($component instanceof Form) {
+			$id = $component->getElementPrototype()->id;
+		} elseif ($component instanceof BaseControl) {
+			// Control interface is not supported
+			$id = $component->getControlPrototype()->id;
+			$showInTree = false;
+			$form = $component->getForm();
+			assert($form !== null);
+			$parentId = $form->getElementPrototype()->id;
+		}
+
+		$controlData = null;
+		$templateData = null;
+		if ($component instanceof Control) {
+			$controlData = $this->getControlData($component);
+			$templateData = $this->getTemplateData($component);
+		}
 
 		$componentList[] = (object) [
+			'showInTree' => $showInTree,
 			'fullName' => $fullName,
 			'shortName' => $component->getName(),
 			'depth' => $depth,
-			'control' => $this->getControlData($component),
-			'template' => $component instanceof Control ? $this->getTemplateData($component) : null,
+			'id' => $id,
+			'parentId' => $parentId,
+			'control' => $controlData,
+			'template' => $templateData,
 		];
 
 		$subDepth = $depth + 1;
-		foreach ($component->getComponents() as $subcomponent) {
-			if ($subcomponent instanceof Component) {
+		if ($component instanceof IContainer) {
+			foreach ($component->getComponents() as $subcomponent) {
+				if (!$subcomponent instanceof Component) {
+					continue; // IComponent is not supported
+				}
+
 				$this->buildComponentListInternal($componentList, $subcomponent, $subDepth);
 			}
 		}
@@ -95,8 +126,8 @@ final class Inspector
 		assert(is_string($fileName));
 
 		return [
-			'shortName' => $reflection->getShortName(),
 			'fullName' => $reflection->getName(),
+			'shortName' => $reflection->getShortName(),
 			'editorUri' => Helpers::editorUri($fileName),
 			'dump' => Dumper::toHtml($component),
 		];

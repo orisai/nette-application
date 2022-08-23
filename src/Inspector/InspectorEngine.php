@@ -87,8 +87,8 @@ final class InspectorEngine extends Engine
 		}
 
 		return [
-			'shortName' => $shortName,
 			'fullName' => $file,
+			'shortName' => $shortName,
 			'editorUri' => $editorUri,
 			'renderTime' => $renderTime,
 		];
