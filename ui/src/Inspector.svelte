@@ -55,6 +55,8 @@
             $mode = InspectorMode.Inspect
         }
     }
+
+	mode.subscribe(() => $showHelp = false)
 </script>
 
 <svelte:window on:keydown={handleKeyDown} />
