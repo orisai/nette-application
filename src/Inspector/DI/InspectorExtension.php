@@ -9,6 +9,7 @@ use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use OriNette\Application\Inspector\Inspector;
 use OriNette\Application\Inspector\InspectorEngine;
 use OriNette\Application\Inspector\Tracy\InspectorPanel;
 use stdClass;
@@ -21,11 +22,30 @@ use function assert;
 final class InspectorExtension extends CompilerExtension
 {
 
+	private ServiceDefinition $inspectorDefinition;
+
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
+			'development' => Expect::bool(false),
 			'enabled' => Expect::bool(false),
 		]);
+	}
+
+	public function loadConfiguration(): void
+	{
+		parent::loadConfiguration();
+
+		$builder = $this->getContainerBuilder();
+		$config = $this->config;
+
+		if (!$config->enabled) {
+			return;
+		}
+
+		$this->inspectorDefinition = $builder->addDefinition($this->prefix('inspector'))
+			->setFactory(Inspector::class)
+			->setAutowired(false);
 	}
 
 	public function beforeCompile(): void
@@ -44,6 +64,9 @@ final class InspectorExtension extends CompilerExtension
 
 		$latteDefinition = $latteFactoryDefinition->getResultDefinition();
 		$latteDefinition->setFactory(InspectorEngine::class);
+		$latteDefinition->addSetup('setInspector', [
+			$this->inspectorDefinition,
+		]);
 
 		$applicationDefinition = $builder->getDefinitionByType(Application::class);
 		assert($applicationDefinition instanceof ServiceDefinition);
@@ -55,6 +78,8 @@ final class InspectorExtension extends CompilerExtension
 				$builder->getDefinitionByType(Bar::class),
 				$applicationDefinition,
 				$latteFactoryDefinition,
+				$this->inspectorDefinition,
+				$config->development,
 			],
 		);
 	}
@@ -63,11 +88,13 @@ final class InspectorExtension extends CompilerExtension
 		string $name,
 		Bar $bar,
 		Application $application,
-		LatteFactory $latteFactory
+		LatteFactory $latteFactory,
+		Inspector $inspector,
+		bool $development
 	): void
 	{
 		$bar->addPanel(
-			new InspectorPanel($application, $latteFactory),
+			new InspectorPanel($application, $latteFactory, $inspector, $development),
 			$name,
 		);
 	}

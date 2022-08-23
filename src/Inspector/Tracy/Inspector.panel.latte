@@ -1,224 +1,31 @@
+{varType bool $development}
+{varType array $props}
+{varType string|null $styleCode}
+{varType string|null $scriptCode}
+
 <h1>Inspector</h1>
+<div class="tracy-inner" id="orisai-inspector" data-props="{$props}"></div>
 
-<div class="HorizontalStack tracy-Inspector tracy-inner">
-	<div id="tree">
-		<input id="filter-query" type="text" placeholder="Filter">
+{if $development}
+	<script>
+		const baseUrl = "http://localhost:5173"
 
-		<table>
-			<tr n:foreach="$componentList as $item">
-				{* @todo full name for filtering *}
-				<td data-name="{$item->name}">
-					{if $item->depth > 0}
-						<span style="margin-left: {$item->depth * 2}ex"></span>└ 
-					{/if}
+		const viteClientScript = document.createElement("script")
+		viteClientScript.src = `${ baseUrl }/@vite/client`
+		viteClientScript.type = "module"
 
-					<span n:if="!$item->isRenderable" class="tracy-Inspector-type">
-						{$item->classShortName}
-					</span>
+		const mainScript = document.createElement("script")
+		mainScript.src = `${ baseUrl }/src/main.ts`
+		mainScript.type = "module"
 
-					{* @todo link to component and code or template? *}
-					<a href="#">
-						{$item->name}
-					</a>
-{*					<?= Helpers::editorLink($item->template->getName()) ?>*}
-{*					<a href="<?= Helpers::escapeHtml(Helpers::editorUri($item->phpFile)) ?>" class="nette-LattePanel-php">php</a>*}
-				</td>
-			</tr>
-		</table>
-	</div>
+		document.head.append(viteClientScript, mainScript)
+	</script>
+{elseif $styleCode !== null && $scriptCode !== null}
+	<style>
+		{$styleCode|noescape}
+	</style>
 
-	<div>
-		<div class="tracy-Inspector-toolbar">
-			<button id="switch-button" class="tracy-Inspector-toolbarItem">
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect width="16" height="16" fill="white"/>
-					<path d="M3.33333 3.33333V12.6667H5.85185V14H2.66667C2.29848 14 2 13.7015 2 13.3333V2.66667C2 2.29848 2.29848 2 2.66667 2H13.3333C13.7015 2 14 2.29848 14 2.66667V5.85185H12.6667V3.33333H3.33333Z"
-						  fill="currentColor"/>
-					<path d="M7.4075 7.61148L9.18437 14.2747C9.22274 14.4187 9.41622 14.4438 9.49011 14.3145L10.9016 11.8444L13.5286 14.4714C13.7889 14.7317 14.211 14.7317 14.4714 14.4714C14.7317 14.211 14.7317 13.7889 14.4714 13.5286L11.8444 10.9016L14.3145 9.49011C14.4438 9.41622 14.4187 9.22274 14.2747 9.18437L7.61148 7.4075C7.48768 7.37448 7.37448 7.48768 7.4075 7.61148Z"
-						  fill="currentColor"/>
-				</svg>
-				Inspect
-			</button>
-
-			<button id="live-preview-button"
-					class="tracy-Inspector-toolbarItem tracy-Inspector-toolbarItem--livePreview">
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect width="16" height="16" fill="white"/>
-					<path fill-rule="evenodd" clip-rule="evenodd"
-						  d="M7.99998 13.3333C10.9455 13.3333 13.3333 10.9455 13.3333 7.99998C13.3333 5.05446 10.9455 2.66665 7.99998 2.66665C5.05446 2.66665 2.66665 5.05446 2.66665 7.99998C2.66665 10.9455 5.05446 13.3333 7.99998 13.3333ZM7.99998 14.6666C11.6819 14.6666 14.6666 11.6819 14.6666 7.99998C14.6666 4.31808 11.6819 1.33331 7.99998 1.33331C4.31808 1.33331 1.33331 4.31808 1.33331 7.99998C1.33331 11.6819 4.31808 14.6666 7.99998 14.6666Z"
-						  fill="currentColor"/>
-					<path fill-rule="evenodd" clip-rule="evenodd"
-						  d="M6.46594 6.15418C6.46594 5.63257 7.0366 5.32144 7.46263 5.61078L10.1805 7.4566C10.5611 7.71511 10.5611 8.28489 10.1805 8.5434L7.46263 10.3892C7.0366 10.6786 6.46594 10.3674 6.46594 9.84582V6.15418Z"
-						  fill="currentColor"/>
-				</svg>
-				Live Preview
-			</button>
-
-			<button id="three-dimensional-mode-button" class="tracy-Inspector-toolbarItem">
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M6.07202 13.4871V2.51294C6.07202 2.3503 6.22487 2.23096 6.38266 2.27041L13.6257 4.08116C13.737 4.10898 13.815 4.20898 13.815 4.3237V11.6763C13.815 11.791 13.737 11.891 13.6257 11.9189L6.38266 13.7296C6.22487 13.7691 6.07202 13.6497 6.07202 13.4871Z"
-						  stroke="currentColor" stroke-width="1.3"/>
-					<path d="M4.12079 3.60852V12.3916" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-					<path d="M2.185 4.48676V11.5132" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-				</svg>
-				3D Mode
-			</button>
-		</div>
-
-		<div id="target"></div>
-	</div>
-</div>
-
-<style id="style-filtering"></style>
-
-<style>
-	#tracy-debug .tracy-Inspector-toolbar {
-		display: inline-flex;
-		margin-bottom: 8px;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbar .tracy-Inspector-toolbarItem:first-child {
-		border-top-left-radius: 3px;
-		border-bottom-left-radius: 3px;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbar .tracy-Inspector-toolbarItem:last-child {
-		border-top-right-radius: 3px;
-		border-bottom-right-radius: 3px;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbar .tracy-Inspector-toolbarItem:not(:first-child) {
-		margin-left: -1px;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbarItem {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0 12px 0 8px;
-		height: 32px !important;
-		border: 1px solid #ECEBEB;
-		transition: background-color 0.16s ease;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbarItem:hover {
-		background-color: #F5F4F2;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbarItem svg {
-		margin-right: 6px;
-		flex: 0 0 auto;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbarItem.is-active {
-		color: #0095ff;
-		position: relative;
-		z-index: 1;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbarItem--livePreview.is-on svg {
-		color: #42C122;
-	}
-
-	#tracy-debug .tracy-Inspector-toolbarItem--livePreview:not(.is-on) svg:nth-child(2) {
-		display: none;
-	}
-
-	#tracy-debug .tracy-Inspector-type {
-		border-radius: 2px;
-		padding: 2px 4px;
-		font-size: 80%;
-		color: white;
-		font-weight: bold;
-		background: #00000052;
-	}
-
-	#tracy-debug .tracy-Inspector-componentName {
-		font-size: 17px;
-	}
-
-	#tracy-debug .tracy-Inspector-renderTime {
-		margin-top: 16px;
-		opacity: 0.5;
-	}
-
-	.HorizontalStack {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		column-gap: 24px;
-	}
-
-	.HorizontalStack > * {
-		width: auto !important;
-		overflow: auto;
-	}
-
-	.HorizontalStack #tree table td {
-		background-color: transparent !important;
-	}
-
-	.HorizontalStack #tree input {
-		display: block;
-		width: 100%;
-		border: 1px dotted silver;
-		padding: 0 8px;
-		margin-bottom: 8px;
-		line-height: 32px;
-		height: 32px;
-	}
-
-	.HorizontalStack #tree input:focus {
-		border-color: #aaaaaa;
-		outline: none;
-	}
-
-	#tree {
-		white-space: nowrap;
-	}
-
-	#tree td {
-		transition: opacity 0.2s ease !important;
-	}
-
-
-	.pl-HighlightingElement {
-		--color: hsla(205, 100%, 50%, 1);
-		--background: hsla(205, 100%, 50%, 0.32);
-		--on-color: white;
-		--radius: 2px;
-
-		border: 1px solid var(--color);
-		background: var(--background);
-		pointer-events: none;
-		position: absolute;
-		border-radius: var(--radius);
-		transition: 0.24s ease;
-		transition-delay: 0.1s;
-		will-change: transform;
-		/*z-index: 2147483647;*/
-		z-index: 20227; /* 20228 ma panel od Tracy */
-		z-index: 20000; /* 20228 ma panel od Tracy */
-	}
-
-	.pl-HighlightingElement-name {
-		position: absolute;
-		padding: 2px 4px;
-		background-color: var(--color);
-		color: var(--on-color);
-		border-radius: var(--radius) 0 var(--radius) 0;
-		font-size: 11px;
-	}
-
-	.tracy-InspectorPanel-3DMode {
-		perspective: 1800px;
-		transform-style: preserve-3d;
-	}
-
-	.tracy-InspectorPanel-3DMode body {
-		transform-origin: center center;
-	}
-</style>
-
-<script>
-	{$scriptCode|noescape}
-</script>
+	<script>
+		{$scriptCode|noescape}
+	</script>
+{/if}

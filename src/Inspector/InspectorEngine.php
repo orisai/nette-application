@@ -4,23 +4,24 @@ namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Presenter;
-use Nette\Application\UI\Renderable;
-use Nette\Utils\Json;
-use ReflectionClass;
-use Tracy\Debugger;
 use Tracy\Helpers;
-use function array_map;
-use function array_unshift;
-use function assert;
 use function basename;
 use function file_exists;
-use function implode;
-use function is_string;
+use function hrtime;
 use const PHP_EOL;
 
+/**
+ * @internal
+ */
 final class InspectorEngine extends Engine
 {
+
+	private Inspector $inspector;
+
+	public function setInspector(Inspector $inspector): void
+	{
+		$this->inspector = $inspector;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -29,9 +30,9 @@ final class InspectorEngine extends Engine
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
 		if ($control instanceof Control) {
-			Debugger::timer();
+			$start = hrtime(true);
 			$output = Helpers::capture(fn () => parent::render($name, $params, $block));
-			$renderTime = Debugger::timer();
+			$renderTime = (hrtime(true) - $start) / 1e+6;
 
 			echo $this->wrapOutput($output, $control, $name, $renderTime);
 
@@ -48,9 +49,9 @@ final class InspectorEngine extends Engine
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
 		if ($control instanceof Control) {
-			Debugger::timer();
+			$start = hrtime(true);
 			$output = parent::renderToString($name, $params, $block);
-			$renderTime = Debugger::timer();
+			$renderTime = (hrtime(true) - $start) / 1e+6;
 
 			return $this->wrapOutput($output, $control, $name, $renderTime);
 		}
@@ -60,67 +61,37 @@ final class InspectorEngine extends Engine
 
 	private function wrapOutput(string $output, Control $control, string $file, float $renderTime): string
 	{
-		$controlTreeInfo = $this->getControlTreeInfo($control, $file);
-		$data = Json::encode([
-			'tree' => $controlTreeInfo,
-			'renderTime' => $renderTime,
-		]);
+		$info = $this->getTemplateData($file, $renderTime);
+		$this->inspector->addTemplateData($control, $info);
 
-		$name = implode(
-			$control::NAME_SEPARATOR,
-			array_map(static fn (array $item) => $item['name'], $controlTreeInfo),
-		);
+		$fullName = $this->inspector->getFullName($control);
 
-		$wrapped = "<!-- {control {$name} {$data}} -->" . PHP_EOL;
+		$wrapped = "<!-- {control $fullName} -->" . PHP_EOL;
 		$wrapped .= $output;
-		$wrapped .= '<!-- {/control} -->';
+		$wrapped .= "<!-- {/control $fullName} -->" . PHP_EOL;
 
 		return $wrapped;
 	}
 
 	/**
-	 * @return array<mixed>
+	 * @return array{shortName: string|null, fullName: string, editorUri: string|null, renderTime: float}
 	 */
-	private function getControlTreeInfo(Control $control, string $file): array
+	private function getTemplateData(string $file, float $renderTime): array
 	{
-		$treeInfo = [];
-
-		$lastRenderable = $control;
-
-		$fileExists = file_exists($file);
-		$templateFile = $fileExists ? Helpers::editorUri($file) : '';
-		$templateFileName = $fileExists ? basename($file) : '';
-
-		while ($control !== null && !$control instanceof Presenter) {
-			$name = $control->getName() ?? '_UNATTACHED_';
-
-			if ($control instanceof Renderable) {
-				$reflection = new ReflectionClass($control);
-				$fileName = $reflection->getFileName();
-				assert(is_string($fileName));
-
-				$lastRenderable = $control;
-			}
-
-			$reflection = new ReflectionClass($lastRenderable);
-			$fileName = $reflection->getFileName();
-			assert(is_string($fileName));
-
-			array_unshift(
-				$treeInfo,
-				[
-					'name' => $name,
-					'templateFile' => $templateFile,
-					'templateFileName' => $templateFileName,
-					'file' => Helpers::editorUri($fileName),
-					'className' => $reflection->getName(),
-				],
-			);
-
-			$control = $control->getParent();
+		if (file_exists($file)) {
+			$editorUri = Helpers::editorUri($file);
+			$shortName = basename($file);
+		} else {
+			$editorUri = null;
+			$shortName = null;
 		}
 
-		return $treeInfo;
+		return [
+			'fullName' => $file,
+			'shortName' => $shortName,
+			'editorUri' => $editorUri,
+			'renderTime' => $renderTime,
+		];
 	}
 
 }
