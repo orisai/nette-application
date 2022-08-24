@@ -1,7 +1,7 @@
 import type { InspectorComponent } from "../InspectorTypes"
 
 export interface ComponentDescriptor {
-    rootElement: HTMLElement
+    rootElements: HTMLElement[]
     fullName: string
 }
 
@@ -32,12 +32,13 @@ export function getComponentDescriptor(element: HTMLElement): ComponentDescripto
     let commentNode: Node | null = null
     let inUnopenedComponent = false
     let rootElement: HTMLElement | null = null
+    const roots: HTMLElement[] = []
 
     // Forms
     if (element instanceof HTMLFormElement || element.closest("form")) {
         const form = element.closest("form") as HTMLFormElement
         return {
-            rootElement: form,
+            rootElements: [form],
             fullName: form.id.split("-").pop() as string
         }
     }
@@ -73,19 +74,15 @@ export function getComponentDescriptor(element: HTMLElement): ComponentDescripto
                 rootElement = node
             }
 
-            if (node.previousSibling) {
-                node = node.previousSibling
-            } else {
-                node = node.parentNode
-            }
+            node = node.previousSibling || node.parentNode
         }
     }
 
-    if (commentNode === null || commentNode.textContent === null) {
-        return null
-    }
-
-    if (!startComponentRegExp.test(commentNode.textContent.trim())) {
+    if (
+        commentNode === null ||
+        commentNode.textContent === null ||
+        !startComponentRegExp.test(commentNode.textContent.trim())
+    ) {
         return null
     }
 
@@ -99,14 +96,29 @@ export function getComponentDescriptor(element: HTMLElement): ComponentDescripto
 
     if (
         rootElement === document.documentElement ||
-        rootElement === document.body ||
-        window.getComputedStyle(rootElement).display === "none"
+        rootElement === document.body
+        // window.getComputedStyle(rootElement).display === "none"
     ) {
         return null
     }
 
+    roots.push(rootElement)
+
+    let temp = rootElement
+
+    while (temp.nextSibling) {
+        if (temp.nextSibling.nodeType === Node.ELEMENT_NODE) {
+            roots.push(temp.nextSibling as HTMLElement)
+        } else if (temp.nextSibling.nodeType === Node.COMMENT_NODE) {
+            if (endComponentRegExp.test((temp.nextSibling.textContent as string).trim())) {
+                break
+            }
+        }
+        temp = temp.nextSibling as HTMLElement
+    }
+
     return {
-        rootElement,
+        rootElements: roots,
         fullName
     }
 }
