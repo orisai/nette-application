@@ -17,7 +17,7 @@
 </div>
 
 {#if component.control !== null}
-	{@html component.control.dump}
+    {@html component.control.dump}
 {/if}
 
 <style lang="sass">
