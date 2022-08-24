@@ -1,35 +1,18 @@
 <script lang="ts">
     import Portal from "svelte-portal/src/Portal.svelte"
-    import { onMount } from "svelte"
     import { SelectionMode } from "./mode/utils"
     import type { HighlighterRect } from "./InspectorTypes"
 
     export let name: string
     export let selectionMode: SelectionMode
     export let rect: HighlighterRect | null = null
-    export let invisible: boolean
 
     let element: HTMLDivElement
-    let active = false
-
-    onMount(() => {
-        element.addEventListener(
-            "transitionend",
-            () => {
-                active = true
-            },
-            {
-                once: true
-            }
-        )
-    })
 </script>
 
 <Portal target={document.body}>
     <div
         bind:this={element}
-        class:orisai-invisible={invisible}
-        class:orisai-active={active}
         class:orisai-mode-info={selectionMode === SelectionMode.Info}
         class:orisai-mode-php={selectionMode === SelectionMode.PHP}
         class:orisai-mode-latte={selectionMode === SelectionMode.Latte}
@@ -62,15 +45,7 @@
 		pointer-events: none
 		position: absolute
 		border-radius: 0 var(--orisai-radius) var(--orisai-radius)
-		transition: opacity 0.24s ease
-
-	.orisai-active
-		transition-property: all
-		will-change: transform
 		z-index: 19000 // 20000+ ma panel od Tracy
-
-	.orisai-invisible
-		opacity: 0
 
 	.orisai-mode-info
 		--color: hsla(205, 100%, 50%, 1)

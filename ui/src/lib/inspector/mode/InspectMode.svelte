@@ -7,35 +7,44 @@
     import Highlighter from "../Highlighter.svelte"
     import type { HighlighterRect } from "../InspectorTypes"
 
+    interface HighlighterOptions {
+        name: string
+        rect: HighlighterRect
+    }
+
     const dispatch = createEventDispatcher<{
         inspect: { componentDescriptor: ComponentDescriptor | null; selectionMode: SelectionMode }
     }>()
 
-    let componentName: string | null = null
     let selectionMode: SelectionMode = SelectionMode.Info
-    let rect: HighlighterRect | null = null
-    let invisible = false
+    let highlighterOptions: HighlighterOptions[] = []
 
-    function highlightElement(target: HTMLElement, name: string) {
-        const domRect = target.getBoundingClientRect()
-        componentName = name
-        rect = {
-            x: domRect.left,
-            y: domRect.top + window.document.documentElement.scrollTop,
-            width: domRect.width,
-            height: domRect.height
+    function prepareHighlighters(componentDescriptor: ComponentDescriptor | null) {
+        highlighterOptions = []
+
+        if (componentDescriptor === null) {
+            return
         }
+
+        const preparedHighlighterOptionss: HighlighterOptions[] = []
+        componentDescriptor.rootElements.forEach((rootElement) => {
+            const domRect = rootElement.getBoundingClientRect()
+            preparedHighlighterOptionss.push({
+                name: componentDescriptor.fullName,
+                rect: {
+                    x: domRect.left,
+                    y: domRect.top + window.document.documentElement.scrollTop,
+                    width: domRect.width,
+                    height: domRect.height
+                }
+            })
+        })
+
+        highlighterOptions = preparedHighlighterOptionss
     }
 
     function handleMouseMove(event: MouseEvent) {
-        const componentDescriptor = getComponentDescriptor(event.target as HTMLElement)
-
-        if (componentDescriptor !== null) {
-            highlightElement(componentDescriptor.rootElement, componentDescriptor.fullName)
-            invisible = false
-        } else {
-            invisible = true
-        }
+        prepareHighlighters(getComponentDescriptor(event.target as HTMLElement))
     }
 
     function handleClick(event: MouseEvent) {
@@ -46,6 +55,7 @@
             selectionMode
         })
         $mode = null
+        highlighterOptions = []
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -77,9 +87,6 @@
     on:keyup={handleKeyUp}
 />
 
-<Highlighter
-    name={componentName || ""}
-    {selectionMode}
-    {rect}
-    invisible={rect === null || invisible}
-/>
+{#each highlighterOptions as option}
+    <Highlighter name={option.name} {selectionMode} rect={option.rect} />
+{/each}
