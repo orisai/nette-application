@@ -13,7 +13,6 @@
 
     let componentName: string | null = null
     let selectionMode: SelectionMode = SelectionMode.Info
-    let componentDescriptor: ComponentDescriptor | null = null
     let rect: HighlighterRect | null = null
     let invisible = false
 
@@ -29,7 +28,7 @@
     }
 
     function handleMouseMove(event: MouseEvent) {
-        componentDescriptor = getComponentDescriptor(event.target as HTMLElement)
+        const componentDescriptor = getComponentDescriptor(event.target as HTMLElement)
 
         if (componentDescriptor !== null) {
             highlightElement(componentDescriptor.rootElement, componentDescriptor.fullName)

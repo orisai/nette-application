@@ -16,15 +16,15 @@ export function getComponentViewName(component: InspectorComponent): string {
         return component.shortName
     }
 
-	if (component.control !== null) {
+    if (component.control !== null) {
         return component.control.shortName
     }
 
-	if (component.id !== null) {
-		return component.id;
-	}
+    if (component.id !== null) {
+        return component.id
+    }
 
-	throw new Error('Should not happen');
+    throw new Error("Should not happen")
 }
 
 export function getComponentDescriptor(element: HTMLElement): ComponentDescriptor | null {
@@ -32,6 +32,15 @@ export function getComponentDescriptor(element: HTMLElement): ComponentDescripto
     let commentNode: Node | null = null
     let inUnopenedComponent = false
     let rootElement: HTMLElement | null = null
+
+    // Forms
+    if (element instanceof HTMLFormElement || element.closest("form")) {
+        const form = element.closest("form") as HTMLFormElement
+        return {
+            rootElement: form,
+            fullName: form.id.split("-").pop() as string
+        }
+    }
 
     const startComponentRegExp = new RegExp("{control (.+)}")
     const endComponentRegExp = new RegExp("{/control (.+)}")
