@@ -6,13 +6,10 @@
     export let name: string
     export let selectionMode: SelectionMode
     export let rect: HighlighterRect | null = null
-
-    let element: HTMLDivElement
 </script>
 
 <Portal target={document.body}>
     <div
-        bind:this={element}
         class:orisai-mode-info={selectionMode === SelectionMode.Info}
         class:orisai-mode-php={selectionMode === SelectionMode.PHP}
         class:orisai-mode-latte={selectionMode === SelectionMode.Latte}
