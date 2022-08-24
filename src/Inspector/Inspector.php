@@ -127,7 +127,9 @@ final class Inspector
 			'fullName' => $reflection->getName(),
 			'shortName' => $reflection->getShortName(),
 			'editorUri' => Helpers::editorUri($fileName),
-			'dump' => Dumper::toHtml($component),
+			'dump' => Dumper::toHtml($component, [
+				'depth' => 1,
+			]),
 		];
 	}
 
