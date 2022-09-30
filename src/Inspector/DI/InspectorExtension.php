@@ -27,7 +27,7 @@ final class InspectorExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'development' => Expect::bool(false),
+			'_dev' => Expect::bool(false),
 			'enabled' => Expect::bool(false),
 		]);
 	}
@@ -79,7 +79,7 @@ final class InspectorExtension extends CompilerExtension
 				$applicationDefinition,
 				$latteFactoryDefinition,
 				$this->inspectorDefinition,
-				$config->development,
+				$config->_dev,
 			],
 		);
 	}
