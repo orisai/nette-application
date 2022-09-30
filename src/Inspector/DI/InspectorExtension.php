@@ -7,6 +7,7 @@ use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Definitions\ServiceDefinition;
+use Nette\Http\IRequest;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use OriNette\Application\Inspector\Inspector;
@@ -71,6 +72,9 @@ final class InspectorExtension extends CompilerExtension
 		$applicationDefinition = $builder->getDefinitionByType(Application::class);
 		assert($applicationDefinition instanceof ServiceDefinition);
 
+		$requestDefinition = $builder->getDefinitionByType(IRequest::class);
+		assert($requestDefinition instanceof ServiceDefinition);
+
 		$applicationDefinition->addSetup(
 			[self::class, 'setupPanel'],
 			[
@@ -79,6 +83,7 @@ final class InspectorExtension extends CompilerExtension
 				$applicationDefinition,
 				$latteFactoryDefinition,
 				$this->inspectorDefinition,
+				$requestDefinition,
 				$config->_dev,
 			],
 		);
@@ -90,11 +95,12 @@ final class InspectorExtension extends CompilerExtension
 		Application $application,
 		LatteFactory $latteFactory,
 		Inspector $inspector,
+		IRequest $request,
 		bool $development
 	): void
 	{
 		$bar->addPanel(
-			new InspectorPanel($application, $latteFactory, $inspector, $development),
+			new InspectorPanel($application, $latteFactory, $inspector, $request, $development),
 			$name,
 		);
 	}
