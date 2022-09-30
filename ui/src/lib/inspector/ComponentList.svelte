@@ -1,44 +1,44 @@
 <script lang="ts">
-    import type { InspectorComponent } from "./InspectorTypes"
-    import { createEventDispatcher } from "svelte"
-    import { getComponentViewName } from "./mode/utils.js"
-    import ComponentEditorLinks from "./ComponentEditorLinks.svelte"
+	import type { InspectorComponent } from "./InspectorTypes"
+	import { createEventDispatcher } from "svelte"
+	import { getComponentViewName } from "./mode/utils.js"
+	import ComponentEditorLinks from "./ComponentEditorLinks.svelte"
 
-    export let list: InspectorComponent[]
-    export let selectedComponent: InspectorComponent | null
+	export let list: InspectorComponent[]
+	export let selectedComponent: InspectorComponent | null
 
-    const dispatch = createEventDispatcher<{
-        select: InspectorComponent
-    }>()
+	const dispatch = createEventDispatcher<{
+		select: InspectorComponent
+	}>()
 
-    let query: string = ""
+	let query: string = ""
 </script>
 
 <input bind:value={query} placeholder="Filter&hellip;" type="search" />
 
 <ul>
-    {#each list as component}
-        {#if component.control !== null && component.showInTree}
-            <li
-                on:click={() => dispatch("select", component)}
-                class:orisai-muted={!component.fullName
-                    .toLowerCase()
-                    .includes(query.toLowerCase()) &&
-                    !component.control.shortName.toLowerCase().includes(query.toLowerCase())}
-                class:orisai-active={selectedComponent === component}
-            >
-                {#if component.depth > 0}
-                    <span style="margin-left: {component.depth * 2}ex" />└
-                {/if}
+	{#each list as component}
+		{#if component.control !== null && component.showInTree}
+			<li
+				on:click={() => dispatch("select", component)}
+				class:orisai-muted={!component.fullName
+					.toLowerCase()
+					.includes(query.toLowerCase()) &&
+					!component.control.shortName.toLowerCase().includes(query.toLowerCase())}
+				class:orisai-active={selectedComponent === component}
+			>
+				{#if component.depth > 0}
+					<span style="margin-left: {component.depth * 2}ex" />└
+				{/if}
 
-                {getComponentViewName(component)}
+				{getComponentViewName(component)}
 
-                <div class="orisai-editor-links">
-                    <ComponentEditorLinks {component} />
-                </div>
-            </li>
-        {/if}
-    {/each}
+				<div class="orisai-editor-links">
+					<ComponentEditorLinks {component} />
+				</div>
+			</li>
+		{/if}
+	{/each}
 </ul>
 
 <style lang="sass">
