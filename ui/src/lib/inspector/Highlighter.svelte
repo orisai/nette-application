@@ -1,34 +1,34 @@
 <script lang="ts">
-    import Portal from "svelte-portal/src/Portal.svelte"
-    import { SelectionMode } from "./mode/utils"
-    import type { HighlighterRect } from "./InspectorTypes"
+	import Portal from "svelte-portal/src/Portal.svelte"
+	import { SelectionMode } from "./mode/utils"
+	import type { HighlighterRect } from "./InspectorTypes"
 
-    export let name: string
-    export let selectionMode: SelectionMode
-    export let rect: HighlighterRect | null = null
+	export let name: string
+	export let selectionMode: SelectionMode
+	export let rect: HighlighterRect | null = null
 </script>
 
 <Portal target={document.body}>
-    <div
-        class:orisai-mode-info={selectionMode === SelectionMode.Info}
-        class:orisai-mode-php={selectionMode === SelectionMode.PHP}
-        class:orisai-mode-latte={selectionMode === SelectionMode.Latte}
-        style={rect === null
-            ? ""
-            : `
+	<div
+		class:orisai-mode-info={selectionMode === SelectionMode.Info}
+		class:orisai-mode-php={selectionMode === SelectionMode.PHP}
+		class:orisai-mode-latte={selectionMode === SelectionMode.Latte}
+		style={rect === null
+			? ""
+			: `
 			transform: translate3d(${rect.x}px, ${rect.y}px, 0);
 			left: 0px;
 			top: 0px;
 			width: ${rect.width}px;
 			height: ${rect.height}px;
 		`}
-    >
-        <span>
-            {name}
-            -
-            {selectionMode}
-        </span>
-    </div>
+	>
+		<span>
+			{name}
+			-
+			{selectionMode}
+		</span>
+	</div>
 </Portal>
 
 <style lang="sass">

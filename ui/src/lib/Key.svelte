@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let key: string
+	export let key: string
 </script>
 
 <span>{key}</span>

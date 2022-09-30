@@ -1,23 +1,23 @@
 <script lang="ts">
-    import RenderTime from "../RenderTime.svelte"
-    import type { InspectorComponent } from "./InspectorTypes"
-    import { getComponentViewName } from "./mode/utils.js"
-    import ComponentEditorLinks from "./ComponentEditorLinks.svelte"
+	import RenderTime from "../RenderTime.svelte"
+	import type { InspectorComponent } from "./InspectorTypes"
+	import { getComponentViewName } from "./mode/utils.js"
+	import ComponentEditorLinks from "./ComponentEditorLinks.svelte"
 
-    export let component: InspectorComponent
+	export let component: InspectorComponent
 </script>
 
 <h2>{getComponentViewName(component)}</h2>
 
 <div class="orisai-grid">
-    <ComponentEditorLinks {component} />
-    {#if component.template !== null}
-        <RenderTime time={component.template.renderTime} />
-    {/if}
+	<ComponentEditorLinks {component} />
+	{#if component.template !== null}
+		<RenderTime time={component.template.renderTime} />
+	{/if}
 </div>
 
 {#if component.control !== null}
-    {@html component.control.dump}
+	{@html component.control.dump}
 {/if}
 
 <style lang="sass">

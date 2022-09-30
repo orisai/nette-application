@@ -1,9 +1,9 @@
 <script lang="ts">
-    export let time: number
+	export let time: number
 </script>
 
 <div>
-    Render time: {time.toFixed(4)} ms
+	Render time: {time.toFixed(4)} ms
 </div>
 
 <style lang="sass">
