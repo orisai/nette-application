@@ -29,14 +29,4 @@
 	</ToolbarButton>
 
 	<ToolbarButton on:click={() => ($showHelp = !$showHelp)} active={$showHelp}>Help</ToolbarButton>
-
-	<!--	<ToolbarButton on:click={() => $mode = InspectorMode.ThreeDimensional} active={$mode === InspectorMode.ThreeDimensional}>-->
-	<!--		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">-->
-	<!--			<path d="M6.07202 13.4871V2.51294C6.07202 2.3503 6.22487 2.23096 6.38266 2.27041L13.6257 4.08116C13.737 4.10898 13.815 4.20898 13.815 4.3237V11.6763C13.815 11.791 13.737 11.891 13.6257 11.9189L6.38266 13.7296C6.22487 13.7691 6.07202 13.6497 6.07202 13.4871Z"-->
-	<!--				  stroke="currentColor" stroke-width="1.3"/>-->
-	<!--			<path d="M4.12079 3.60852V12.3916" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>-->
-	<!--			<path d="M2.185 4.48676V11.5132" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>-->
-	<!--		</svg>-->
-	<!--		3D Mode-->
-	<!--	</ToolbarButton>-->
 </Toolbar>
