@@ -4,7 +4,6 @@
 	import InspectorToolbar from "./lib/inspector/InspectorToolbar.svelte"
 	import { InspectorMode, mode } from "./lib/inspector/store"
 	import InspectMode from "./lib/inspector/mode/InspectMode.svelte"
-	import ThreeDimensionalMode from "./lib/inspector/mode/ThreeDimensionalMode.svelte"
 	import ComponentDetail from "./lib/inspector/ComponentDetail.svelte"
 	import type { ComponentDescriptor } from "./lib/inspector/mode/utils"
 	import { SelectionMode } from "./lib/inspector/mode/utils"
@@ -90,8 +89,6 @@
 
 {#if $mode === InspectorMode.Inspect}
 	<InspectMode on:inspect={handleInspect} />
-{:else if $mode === InspectorMode.ThreeDimensional}
-	<ThreeDimensionalMode />
 {/if}
 
 <style lang="sass">
