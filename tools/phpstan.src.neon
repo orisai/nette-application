@@ -4,3 +4,6 @@ includes:
 parameters:
 	level: 8
 	resultCachePath: %currentWorkingDirectory%/var/tools/PHPStan/resultCache.src.php
+
+	ignoreErrors:
+		- '#^(.+)\|false.given\.$#'
