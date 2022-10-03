@@ -7,3 +7,6 @@ parameters:
 
 	ignoreErrors:
 		- '#^(.+)\|false.given\.$#'
+
+		# Used in tests
+		- '#^Trait (.+)ShortDefaultActionName is used zero times and is not analysed(.+)#'

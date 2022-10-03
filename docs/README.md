@@ -12,6 +12,7 @@ Extras for [nette/application](https://github.com/nette/application/)
 - [Form monitor](#form-monitor)
 - [Inspector](#inspector)
 - [Presenter mapping](#presenter-mapping)
+- [Short default action name](#short-default-action-name)
 
 ## Setup
 
@@ -153,4 +154,42 @@ Change also presenter factory callback to make sure all presenters are registere
 ```neon
 orisai.application.presenterFactory:
 	presenterConstructor: 'strict'
+```
+
+# Short default action name
+
+Use methods `action()` and `render()` instead of `actionDefault()` and `renderDefault()`
+
+```diff
+use Nette\Application\UI\Presenter;
++use OriNette\Application\Presenter\ShortDefaultActionName;
+
+abstract class BasePresenter extends Presenter
+{
+
++	use ShortDefaultActionName;
+
+-	public function actionDefault(): void
++	public function action(): void
+	{
+
+	}
+
+-	public function renderDefault(): void
++	public function render(): void
+	{
+
+	}
+
+	public function actionOther(): void
+	{
+
+	}
+
+	public function renderOther(): void
+	{
+
+	}
+
+}
 ```
