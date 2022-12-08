@@ -7,6 +7,8 @@ use Nette\Application\UI\Presenter;
 use function array_flip;
 use function array_map;
 use function array_merge;
+use function assert;
+use function is_string;
 
 final class CanonicalLinker
 {
@@ -48,6 +50,7 @@ final class CanonicalLinker
 			: $component->lookupPath(Presenter::class);
 
 		foreach ($component::getReflection()->getPersistentParams() as $name => $meta) {
+			assert(is_string($name));
 			$fullName = $path !== null
 				? "$path-$name"
 				: $name;

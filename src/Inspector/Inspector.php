@@ -18,6 +18,7 @@ use Tracy\Dumper;
 use Tracy\Helpers;
 use function assert;
 use function is_string;
+use function property_exists;
 use function spl_object_id;
 
 /**
@@ -36,6 +37,10 @@ final class Inspector
 	{
 		$templateFactory->onCreate[] = function (ApplicationTemplate $template): void {
 			$engine = $template->getLatte();
+
+			if (!property_exists($engine, 'probe')) {
+				return;
+			}
 
 			$engine->probe = function (LatteTemplate $template) use ($engine): void {
 				$control = $engine->getProviders()['uiControl'] ?? null;
