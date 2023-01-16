@@ -10,3 +10,6 @@ parameters:
 
 		# Used in tests
 		- '#^Trait (.+)ShortDefaultActionName is used zero times and is not analysed(.+)#'
+
+		# Ignore deprecation
+		- '#^Fetching deprecated class constant (.+) of class Nette\\Caching\\Cache(.+)#'
