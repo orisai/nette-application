@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'OriNette\\\\\\\\Application\\\\\\\\FormMonitor\\\\\\\\Tracy\\\\\\\\FormMonitorPanel' and null will always evaluate to false\\.$#"
+			count: 1
+			path: ../tests/Unit/FormMonitor/DI/FormMonitorExtensionTest.php
