@@ -9,13 +9,7 @@
 		on:click={() => ($mode = $mode === InspectorMode.Inspect ? null : InspectorMode.Inspect)}
 		active={$mode === InspectorMode.Inspect}
 	>
-		<svg
-			width="16"
-			height="16"
-			viewBox="0 0 16 16"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-		>
+		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path
 				d="M3.33333 3.33333V12.6667H5.85185V14H2.66667C2.29848 14 2 13.7015 2 13.3333V2.66667C2 2.29848 2.29848 2 2.66667 2H13.3333C13.7015 2 14 2.29848 14 2.66667V5.85185H12.6667V3.33333H3.33333Z"
 				fill="currentColor"

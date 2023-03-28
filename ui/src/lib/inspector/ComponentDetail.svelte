@@ -61,35 +61,40 @@
 	</div>
 {/if}
 
-<style lang="sass">
-	h2
-		font-size: 17px
-		margin: 0 0 8px !important
+<style lang="postcss">
+	h2 {
+		font-size: 17px;
+		margin: 0 0 8px !important;
+	}
 
-	.orisai-grid
-		display: flex
-		align-items: center
-		gap: 8px
+	.orisai-grid {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
 
-	.InspectorPanel td
-		white-space: nowrap
+	.InspectorPanel td {
+		white-space: nowrap;
+	}
 
-	.InspectorPanel-php
-		background: #8993be
-		color: white
-		border-radius: 79px
-		padding: 1px 4px 3px 4px
-		font-size: 75%
-		font-style: italic
-		font-weight: bold
-		vertical-align: text-top
-		opacity: .5
-		margin-left: 2ex
+	.InspectorPanel-php {
+		background: #8993be;
+		color: white;
+		border-radius: 79px;
+		padding: 1px 4px 3px 4px;
+		font-size: 75%;
+		font-style: italic;
+		font-weight: bold;
+		vertical-align: text-top;
+		opacity: 0.5;
+		margin-left: 2ex;
+	}
 
-	.InspectorPanel-type
-		border-radius: 2px
-		padding: 2px 4px
-		font-size: 80%
-		color: white
-		font-weight: bold
+	.InspectorPanel-type {
+		border-radius: 2px;
+		padding: 2px 4px;
+		font-size: 80%;
+		color: white;
+		font-weight: bold;
+	}
 </style>

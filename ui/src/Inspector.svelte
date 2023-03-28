@@ -91,22 +91,26 @@
 	<InspectMode on:inspect={handleInspect} />
 {/if}
 
-<style lang="sass">
-	.orisai-grid
-		display: grid
-		grid-template-columns: auto 1fr
-		column-gap: 24px
+<style lang="postcss">
+	.orisai-grid {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: 24px;
 
-		> div
-			width: auto
-			overflow: auto
+		& > div {
+			width: auto;
+			overflow: auto;
+		}
 
-		> div:nth-child(2)
-			display: flex
-			flex-direction: column
-			gap: 12px
+		& > div:nth-child(2) {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
 
-			> div
-				flex: 1
-				overflow: auto
+			& > div {
+				flex: 1;
+				overflow: auto;
+			}
+		}
+	}
 </style>

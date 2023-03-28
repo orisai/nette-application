@@ -56,10 +56,7 @@ export function getComponentDescriptor(element: HTMLElement): ComponentDescripto
 				inUnopenedComponent = true
 				break
 			} else {
-				if (
-					node.textContent !== null &&
-					startComponentRegExp.test(node.textContent.trim())
-				) {
+				if (node.textContent !== null && startComponentRegExp.test(node.textContent.trim())) {
 					if (inUnopenedComponent) {
 						inUnopenedComponent = false
 						break

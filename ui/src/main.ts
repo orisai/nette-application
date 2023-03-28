@@ -1,4 +1,4 @@
-import "./orisai.sass"
+import "./orisai.pcss"
 import Inspector from "./Inspector.svelte"
 
 const inspectorTarget = <HTMLElement>document.getElementById("orisai-inspector")
