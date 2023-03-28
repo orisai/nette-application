@@ -26,6 +26,8 @@
 	</style>
 
 	<script>
-		{$scriptCode|noescape}
+		(function () {
+			{$scriptCode|noescape}
+		})();
 	</script>
 {/if}
