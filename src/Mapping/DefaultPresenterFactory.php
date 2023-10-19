@@ -10,7 +10,6 @@ use ReflectionClass;
 use function array_pop;
 use function array_search;
 use function array_unshift;
-use function assert;
 use function class_exists;
 use function count;
 use function explode;
@@ -139,7 +138,6 @@ final class DefaultPresenterFactory implements PresenterFactory
 	{
 		if (str_starts_with($name, ':')) {
 			$name = substr($name, 1);
-			assert($name !== false);
 		}
 
 		if (isset($this->presenterClassCache[$name])) {
