@@ -28,10 +28,6 @@ final class FormMonitorPanel implements IBarPanel
 			$errors = $this->getErrors();
 			// phpcs:enable
 
-			if ($errors === []) {
-				return;
-			}
-
 			require __DIR__ . '/FormMonitor.tab.phtml';
 		});
 	}
@@ -43,10 +39,6 @@ final class FormMonitorPanel implements IBarPanel
 			$formStack = $this->formStack;
 			$errors = $this->getErrors();
 			// phpcs:enable
-
-			if ($errors === []) {
-				return;
-			}
 
 			require __DIR__ . '/FormMonitor.panel.phtml';
 		});

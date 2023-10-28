@@ -10,26 +10,6 @@ use PHPUnit\Framework\TestCase;
 final class FormMonitorPanelTest extends TestCase
 {
 
-	public function testNoRender(): void
-	{
-		$form = new Form();
-
-		$stack = new FormStack();
-		$stack->add($form);
-
-		$panel = new FormMonitorPanel($stack);
-
-		self::assertSame(
-			'',
-			$panel->getPanel(),
-		);
-
-		self::assertSame(
-			'',
-			$panel->getTab(),
-		);
-	}
-
 	public function testRender(): void
 	{
 		$form = new Form();
