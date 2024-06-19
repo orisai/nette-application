@@ -1,6 +1,22 @@
 parameters:
 	ignoreErrors:
 		-
+			message: """
+				#^Fetching deprecated class constant INVALID_LINK_EXCEPTION of class OriNette\\\\Application\\\\ApplicationMap\\\\LinkGeneratingPresenter\\:
+				use Presenter\\:\\:InvalidLinkException$#
+			"""
+			count: 1
+			path: ../src/ApplicationMap/ApplicationMap.php
+
+		-
+			message: """
+				#^Fetching deprecated class constant DEFAULT_ACTION of class Tests\\\\OriNette\\\\Application\\\\Doubles\\\\ShortDefaultActionNamePresenter\\:
+				use Presenter\\:\\:DefaultAction$#
+			"""
+			count: 2
+			path: ../tests/Doubles/ShortDefaultActionNamePresenter.php
+
+		-
 			message: "#^Call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'OriNette\\\\\\\\Application\\\\\\\\FormMonitor\\\\\\\\Tracy\\\\\\\\FormMonitorPanel' and null will always evaluate to false\\.$#"
 			count: 1
 			path: ../tests/Unit/FormMonitor/DI/FormMonitorExtensionTest.php
