@@ -111,7 +111,6 @@ final class Inspector
 			$id = $component->getControlPrototype()->id;
 			$showInTree = false;
 			$form = $component->getForm();
-			assert($form !== null);
 			$parentId = $form->getElementPrototype()->id;
 		}
 
