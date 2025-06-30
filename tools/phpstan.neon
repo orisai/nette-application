@@ -23,6 +23,11 @@ parameters:
 			- Orisai\Exceptions\Check\CheckedException
 
 	ignoreErrors:
+		# Internal classes in tests
+		-
+			message: '#(.+)internal(.+)OriNette(.+)#'
+			path: ../tests
+
 		- '#^(.+)\|false.given\.$#'
 
 		# Ignore deprecation
