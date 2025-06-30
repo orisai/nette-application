@@ -1,22 +1,49 @@
 parameters:
 	ignoreErrors:
 		-
-			message: """
-				#^Fetching deprecated class constant INVALID_LINK_EXCEPTION of class OriNette\\\\Application\\\\ApplicationMap\\\\LinkGeneratingPresenter\\:
-				use Presenter\\:\\:InvalidLinkException$#
-			"""
+			message: '''
+				#^Fetching deprecated class constant EXPIRE of class Nette\\Caching\\Cache\:
+				use Cache\:\:Expire$#
+			'''
+			identifier: classConstant.deprecated
 			count: 1
 			path: ../src/ApplicationMap/ApplicationMap.php
 
 		-
-			message: """
-				#^Fetching deprecated class constant DEFAULT_ACTION of class Tests\\\\OriNette\\\\Application\\\\Doubles\\\\ShortDefaultActionNamePresenter\\:
-				use Presenter\\:\\:DefaultAction$#
-			"""
+			message: '''
+				#^Fetching deprecated class constant FILES of class Nette\\Caching\\Cache\:
+				use Cache\:\:Files$#
+			'''
+			identifier: classConstant.deprecated
+			count: 1
+			path: ../src/ApplicationMap/ApplicationMap.php
+
+		-
+			message: '''
+				#^Fetching deprecated class constant INVALID_LINK_EXCEPTION of class Nette\\Application\\UI\\Presenter\:
+				use Presenter\:\:InvalidLinkException$#
+			'''
+			identifier: classConstant.deprecated
+			count: 1
+			path: ../src/ApplicationMap/ApplicationMap.php
+
+		-
+			message: '#^Call to method getPersistentParams\(\) of internal class Nette\\Application\\UI\\ComponentReflection from outside its root namespace Nette\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: ../src/CanonicalLink/CanonicalLinker.php
+
+		-
+			message: '''
+				#^Fetching deprecated class constant DEFAULT_ACTION of class Nette\\Application\\UI\\Presenter\:
+				use Presenter\:\:DefaultAction$#
+			'''
+			identifier: classConstant.deprecated
 			count: 2
 			path: ../tests/Doubles/ShortDefaultActionNamePresenter.php
 
 		-
-			message: "#^Call to static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'OriNette\\\\\\\\Application\\\\\\\\FormMonitor\\\\\\\\Tracy\\\\\\\\FormMonitorPanel' and null will always evaluate to false\\.$#"
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''OriNette\\\\Application\\\\FormMonitor\\\\Tracy\\\\FormMonitorPanel'' and null will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
 			count: 1
 			path: ../tests/Unit/FormMonitor/DI/FormMonitorExtensionTest.php

@@ -29,6 +29,3 @@ parameters:
 			path: ../tests
 
 		- '#^(.+)\|false.given\.$#'
-
-		# Ignore deprecation
-		- '#^Fetching deprecated class constant (.+) of class Nette\\Caching\\Cache(.+)#'
