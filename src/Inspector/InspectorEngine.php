@@ -4,6 +4,7 @@ namespace OriNette\Application\Inspector;
 
 use Latte\Engine;
 use Nette\Application\UI\Control;
+use Nette\Http\IRequest;
 use Tracy\Helpers;
 use function basename;
 use function file_exists;
@@ -18,9 +19,12 @@ final class InspectorEngine extends Engine
 
 	private Inspector $inspector;
 
-	public function setInspector(Inspector $inspector): void
+	private IRequest $request;
+
+	public function setInspector(Inspector $inspector, IRequest $request): void
 	{
 		$this->inspector = $inspector;
+		$this->request = $request;
 	}
 
 	/**
@@ -29,7 +33,7 @@ final class InspectorEngine extends Engine
 	public function render(string $name, $params = [], ?string $block = null): void
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
-		if ($control instanceof Control) {
+		if ($control instanceof Control && !$this->request->isAjax()) {
 			$start = hrtime(true);
 			$output = Helpers::capture(fn () => parent::render($name, $params, $block));
 			$renderTime = (hrtime(true) - $start) / 1e+6;
@@ -48,7 +52,7 @@ final class InspectorEngine extends Engine
 	public function renderToString(string $name, $params = [], ?string $block = null): string
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
-		if ($control instanceof Control) {
+		if ($control instanceof Control && !$this->request->isAjax()) {
 			$start = hrtime(true);
 			$output = parent::renderToString($name, $params, $block);
 			$renderTime = (hrtime(true) - $start) / 1e+6;

@@ -64,9 +64,10 @@ final class InspectorExtension extends CompilerExtension
 		assert($latteFactoryDefinition instanceof FactoryDefinition);
 
 		$latteDefinition = $latteFactoryDefinition->getResultDefinition();
-		$latteDefinition->setFactory(InspectorEngine::class);
+		$latteDefinition->setFactory(InspectorEngine::class, []);
 		$latteDefinition->addSetup('setInspector', [
 			$this->inspectorDefinition,
+			'@' . IRequest::class,
 		]);
 
 		$applicationDefinition = $builder->getDefinitionByType(Application::class);
