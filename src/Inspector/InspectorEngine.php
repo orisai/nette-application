@@ -27,9 +27,6 @@ final class InspectorEngine extends Engine
 		$this->request = $request;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function render(string $name, $params = [], ?string $block = null): void
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
@@ -46,9 +43,6 @@ final class InspectorEngine extends Engine
 		parent::render($name, $params, $block);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public function renderToString(string $name, $params = [], ?string $block = null): string
 	{
 		$control = $this->getProviders()['uiControl'] ?? null;
