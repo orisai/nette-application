@@ -5,7 +5,6 @@ namespace OriNette\Application\Mapping\DI;
 use Nette\Application\InvalidPresenterException;
 use Nette\Application\IPresenter;
 use Nette\DI\Container;
-use function array_search;
 use function assert;
 use function count;
 use function implode;
@@ -38,9 +37,7 @@ final class StrictPresenterFactoryCallback
 		}
 
 		if (count($exact) === 1) {
-			$i = array_search($exact[0], $services, true);
-
-			return $services[$i];
+			return $exact[0];
 		}
 
 		$servicesInline = implode(', ', $exact !== [] ? $exact : $services);

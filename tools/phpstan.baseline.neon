@@ -1,49 +1,55 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '''
-				#^Fetching deprecated class constant EXPIRE of class Nette\\Caching\\Cache\:
-				use Cache\:\:Expire$#
+			rawMessage: '''
+				Fetching deprecated class constant EXPIRE of class Nette\Caching\Cache:
+				use Cache::Expire
 			'''
 			identifier: classConstant.deprecated
 			count: 1
 			path: ../src/ApplicationMap/ApplicationMap.php
 
 		-
-			message: '''
-				#^Fetching deprecated class constant FILES of class Nette\\Caching\\Cache\:
-				use Cache\:\:Files$#
+			rawMessage: '''
+				Fetching deprecated class constant FILES of class Nette\Caching\Cache:
+				use Cache::Files
 			'''
 			identifier: classConstant.deprecated
 			count: 1
 			path: ../src/ApplicationMap/ApplicationMap.php
 
 		-
-			message: '''
-				#^Fetching deprecated class constant INVALID_LINK_EXCEPTION of class Nette\\Application\\UI\\Presenter\:
-				use Presenter\:\:InvalidLinkException$#
+			rawMessage: '''
+				Fetching deprecated class constant INVALID_LINK_EXCEPTION of class Nette\Application\UI\Presenter:
+				use Presenter::InvalidLinkException
 			'''
 			identifier: classConstant.deprecated
 			count: 1
 			path: ../src/ApplicationMap/ApplicationMap.php
 
 		-
-			message: '#^Call to method getPersistentParams\(\) of internal class Nette\\Application\\UI\\ComponentReflection from outside its root namespace Nette\.$#'
+			rawMessage: 'Call to method getPersistentParams() of internal class Nette\Application\UI\ComponentReflection from outside its root namespace Nette.'
 			identifier: method.internalClass
 			count: 1
 			path: ../src/CanonicalLink/CanonicalLinker.php
 
 		-
-			message: '''
-				#^Fetching deprecated class constant DEFAULT_ACTION of class Nette\\Application\\UI\\Presenter\:
-				use Presenter\:\:DefaultAction$#
+			rawMessage: 'Method OriNette\Application\FormMonitor\FormErrorExtractor::getErrors() should return array<string, string> but returns array<string, string|Stringable>.'
+			identifier: return.type
+			count: 1
+			path: ../src/FormMonitor/FormErrorExtractor.php
+
+		-
+			rawMessage: '''
+				Fetching deprecated class constant DEFAULT_ACTION of class Nette\Application\UI\Presenter:
+				use Presenter::DefaultAction
 			'''
 			identifier: classConstant.deprecated
 			count: 2
 			path: ../tests/Doubles/ShortDefaultActionNamePresenter.php
 
 		-
-			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''OriNette\\\\Application\\\\FormMonitor\\\\Tracy\\\\FormMonitorPanel'' and null will always evaluate to false\.$#'
+			rawMessage: 'Call to static method PHPUnit\Framework\Assert::assertInstanceOf() with ''OriNette\\Application\\FormMonitor\\Tracy\\FormMonitorPanel'' and null will always evaluate to false.'
 			identifier: staticMethod.impossibleType
 			count: 1
 			path: ../tests/Unit/FormMonitor/DI/FormMonitorExtensionTest.php

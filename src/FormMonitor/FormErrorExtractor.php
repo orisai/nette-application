@@ -5,6 +5,7 @@ namespace OriNette\Application\FormMonitor;
 use Nette\Forms\Container;
 use Nette\Forms\Control;
 use Nette\Forms\Form;
+use Stringable;
 use function array_merge;
 
 final class FormErrorExtractor
@@ -24,7 +25,7 @@ final class FormErrorExtractor
 	}
 
 	/**
-	 * @return array<string, string>
+	 * @return array<string, string|Stringable>
 	 */
 	private function getContainerErrors(Container $container, string $parentKey): array
 	{
@@ -47,7 +48,7 @@ final class FormErrorExtractor
 
 	/**
 	 * @param int|string $name
-	 * @return array<string, string>
+	 * @return array<string, string|Stringable>
 	 */
 	private function getControlErrors(Control $control, $name, string $parentKey): array
 	{

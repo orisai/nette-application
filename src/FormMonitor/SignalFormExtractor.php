@@ -6,7 +6,6 @@ use Nette\Application\UI\Presenter;
 use Nette\Forms\Form;
 use Throwable;
 use function array_pop;
-use function count;
 use function implode;
 
 final class SignalFormExtractor
@@ -22,7 +21,7 @@ final class SignalFormExtractor
 	public function extractForm(Presenter $presenter): void
 	{
 		$signal = $presenter->getSignal();
-		if ($signal === null || count($signal) < 2) {
+		if ($signal === null) {
 			return;
 		}
 
@@ -31,7 +30,7 @@ final class SignalFormExtractor
 
 		try {
 			$component = $presenter[$signalPath] ?? null;
-		} catch (Throwable $e) { // @phpstan-ignore-line Component creation may fail for any reason
+		} catch (Throwable $e) {
 			return;
 		}
 
